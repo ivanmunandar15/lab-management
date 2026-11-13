@@ -1,0 +1,25 @@
+import type { DefaultSession } from "next-auth";
+import type { Role } from "@/types/erd";
+
+declare module "next-auth" {
+  interface Session {
+    user: { id: string; role: Role } & DefaultSession["user"];
+  }
+  interface User {
+    role: Role;
+    accessToken?: string;
+    refreshToken?: string;
+    accessExpires?: number;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    role: Role;
+    /** Hanya ada di JWT terenkripsi (server). Tidak pernah dimasukkan ke objek session klien. */
+    accessToken?: string;
+    refreshToken?: string;
+    accessExpires?: number;
+  }
+}
