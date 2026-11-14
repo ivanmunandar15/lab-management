@@ -4,6 +4,8 @@ import { API_URL, clientIp, refreshWithBackend } from "@/lib/auth/backend";
 
 /**
  * Proxy sisi server ke backend (`${API_URL}/compat/...`).
+ * Pengecualian: awalan `main/` meneruskan ke API utama (`${API_URL}/...`) HANYA untuk endpoint di MAIN_ALLOWLIST
+ * (modul email yang tidak punya rute compat). Selain itu ditolak 403.
  * - Token backend ada di JWT sesi terenkripsi (cookie httpOnly); proxy menambahkan `Authorization` dan
  *   TIDAK PERNAH mengirim token ke browser.
  * - Access token yang hampir kedaluwarsa di-refresh di sini, lalu cookie sesi ditulis ulang.
@@ -16,11 +18,25 @@ const SESSION_MAX_AGE = 60 * 60 * 8; // harus sama dengan auth.config.ts
 const REFRESH_SKEW_MS = 60_000;
 const FORWARD_HEADERS = ["content-type", "content-disposition", "content-length", "cache-control", "x-content-type-options", "content-security-policy"];
 
+/** Endpoint API utama (non-compat) yang boleh dijangkau lewat `main/...`. Tambah baris di sini hanya bila memang perlu. */
+const MAIN_ALLOWLIST: { method: string; path: RegExp }[] = [
+  { method: "GET", path: /^email-logs$/ },
+  { method: "POST", path: /^email-logs\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/retry$/i },
+  { method: "POST", path: /^admin\/email\/test$/ },
+];
+
 const err = (status: number, code: string, message: string) => NextResponse.json({ error: { code, message } }, { status });
 
 async function handler(req: NextRequest, ctx: { params: Promise<{ path: string[] }> }) {
   const { path } = await ctx.params;
   if (!path?.length || path.some((p) => p === ".." || p === "." || p.includes("\\"))) return err(400, "VALIDATION", "Path tidak valid");
+
+  const isMain = path[0] === "main";
+  const rest = isMain ? path.slice(1) : path;
+  if (!rest.length) return err(400, "VALIDATION", "Path tidak valid");
+  if (isMain && (rest.some((p) => p.includes("/")) || !MAIN_ALLOWLIST.some((a) => a.method === req.method && a.path.test(rest.join("/"))))) {
+    return err(403, "FORBIDDEN", "Endpoint tidak diizinkan lewat proxy");
+  }
 
   const secret = process.env.AUTH_SECRET;
   if (!secret) return err(500, "INTERNAL", "AUTH_SECRET belum diatur");
@@ -48,7 +64,7 @@ async function handler(req: NextRequest, ctx: { params: Promise<{ path: string[]
     });
   }
 
-  const target = `${API_URL}/compat/${path.map(encodeURIComponent).join("/")}${req.nextUrl.search}`;
+  const target = `${API_URL}/${isMain ? "" : "compat/"}${rest.map(encodeURIComponent).join("/")}${req.nextUrl.search}`;
   const hasBody = !["GET", "HEAD"].includes(req.method);
   const headers: Record<string, string> = { Authorization: `Bearer ${accessToken}`, Accept: "application/json, */*" };
   const ct = req.headers.get("content-type");

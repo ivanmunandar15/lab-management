@@ -23,6 +23,8 @@ export function qs(params: QueryParams = {}): string {
 }
 
 const CODES: ServiceErrorCode[] = ["NOT_FOUND", "VALIDATION", "CONFLICT", "FORBIDDEN", "UNAUTHORIZED", "INTERNAL"];
+/** Kode khusus API utama (mis. EMAIL_NOT_FAILED) dipetakan dari status HTTP-nya. */
+const CODE_BY_STATUS: Record<number, ServiceErrorCode> = { 400: "VALIDATION", 401: "UNAUTHORIZED", 403: "FORBIDDEN", 404: "NOT_FOUND", 409: "CONFLICT", 422: "VALIDATION" };
 let signingOut = false;
 
 async function toError(res: Response): Promise<ServiceError> {
@@ -33,11 +35,11 @@ async function toError(res: Response): Promise<ServiceError> {
     /* body bukan JSON */
   }
   const e = (body as { error?: { code?: string; message?: string; fieldErrors?: Record<string, string> } } | null)?.error;
-  const code = CODES.includes(e?.code as ServiceErrorCode) ? (e!.code as ServiceErrorCode) : "INTERNAL";
+  const code = CODES.includes(e?.code as ServiceErrorCode) ? (e!.code as ServiceErrorCode) : (CODE_BY_STATUS[res.status] ?? "INTERNAL");
   return new ServiceError(code, e?.message ?? `Permintaan gagal (${res.status})`, e?.fieldErrors);
 }
 
-export async function api<T>(path: string, init: { method?: string; body?: unknown } = {}): Promise<T> {
+async function request(path: string, init: { method?: string; body?: unknown }): Promise<Response> {
   const res = await fetch(BASE + path, {
     method: init.method ?? "GET",
     headers: init.body !== undefined ? { "Content-Type": "application/json" } : undefined,
@@ -53,8 +55,23 @@ export async function api<T>(path: string, init: { method?: string; body?: unkno
     void signOut({ callbackUrl: "/login" });
   }
   if (!res.ok) throw await toError(res);
+  return res;
+}
+
+export async function api<T>(path: string, init: { method?: string; body?: unknown } = {}): Promise<T> {
+  const res = await request(path, init);
   if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
+}
+
+/**
+ * Endpoint API utama (bukan compat) lewat proxy `main/...` (hanya yang ada di MAIN_ALLOWLIST proxy).
+ * Respons berbentuk amplop `{ success, data, meta? }`; di sini dibuka menjadi `{ data, meta }`.
+ */
+export async function apiMain<T, M = undefined>(path: string, init: { method?: string; body?: unknown } = {}): Promise<{ data: T; meta: M | undefined }> {
+  const res = await request("main/" + path, init);
+  const body = (await res.json()) as { data: T; meta?: M };
+  return { data: body.data, meta: body.meta };
 }
 
 export const get = <T>(path: string, params?: QueryParams) => api<T>(path + qs(params));

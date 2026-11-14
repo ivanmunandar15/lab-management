@@ -1,9 +1,10 @@
 node_modules
 .next
-.env
 .env*.local
 next-env.d.ts
 *.tsbuildinfo
 
 # hasil scripts/migrate-inventory.mjs
 /data/generated
+
+.env

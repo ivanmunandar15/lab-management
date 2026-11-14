@@ -1,5 +1,5 @@
 import {
-  Bell, ClipboardCheck, ClipboardList, DoorOpen, FileText, History, LayoutDashboard,
+  Bell, ClipboardCheck, ClipboardList, DoorOpen, FileText, History, LayoutDashboard, Mail,
   Microscope, Package, QrCode, Thermometer, Users, Wrench, type LucideIcon,
 } from "lucide-react";
 import { can, type Resource } from "@/lib/rbac";
@@ -29,6 +29,7 @@ export const MAIN_NAV: NavItem[] = [
 export const ADMIN_NAV: NavItem[] = [
   { label: "Users", href: "/users", icon: Users, resource: "user" },
   { label: "Activity Log", href: "/activity-log", icon: History, resource: "activity_log" },
+  { label: "Log Email", href: "/email-logs", icon: Mail, resource: "email_log" },
 ];
 
 export const SCAN_ITEM: NavItem = { label: "Scan QR", href: "/scan", icon: QrCode, resource: "scan" };

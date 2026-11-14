@@ -29,4 +29,5 @@ export const queryKeys = {
     unreadCount: (userId: string) => ["notifications", "unread-count", userId] as const,
   },
   activityLogs: entityKeys("activity-logs"),
+  emailLogs: entityKeys("email-logs"),
 };

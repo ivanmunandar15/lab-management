@@ -3,7 +3,7 @@ import type { Role } from "@/types/erd";
 export type Resource =
   | "dashboard" | "scan" | "equipment" | "supporting_equipment" | "borrowing"
   | "calibration" | "maintenance" | "room" | "monitoring" | "document"
-  | "notification" | "user" | "activity_log";
+  | "notification" | "user" | "activity_log" | "email_log";
 export type Action = "view" | "create" | "update" | "delete";
 
 const ALL: Action[] = ["view", "create", "update", "delete"];
@@ -16,7 +16,7 @@ export const PERMISSIONS: Record<Role, Partial<Record<Resource, Action[]>>> = {
   admin: {
     dashboard: ALL, scan: ALL, equipment: ALL, supporting_equipment: ALL, borrowing: ALL,
     calibration: ALL, maintenance: ALL, room: ALL, monitoring: ALL, document: ALL,
-    notification: ALL, user: ALL, activity_log: ALL,
+    notification: ALL, user: ALL, activity_log: ALL, email_log: ALL,
   },
   SPV: {
     dashboard: VIEW, scan: VIEW, equipment: ALL, supporting_equipment: ALL, borrowing: ALL,
@@ -55,6 +55,7 @@ const ROUTE_RESOURCES: { prefix: string; resource: Resource }[] = [
   { prefix: "/notifications", resource: "notification" },
   { prefix: "/users", resource: "user" },
   { prefix: "/activity-log", resource: "activity_log" },
+  { prefix: "/email-logs", resource: "email_log" },
 ];
 
 export function canAccessPath(role: Role | undefined, pathname: string) {
