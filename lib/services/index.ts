@@ -14,3 +14,4 @@ export * from "./dashboard-service";
 export * from "./report-service";
 export * from "./notification-generator";
 export * from "./email-service";
+export * from "./account-service";

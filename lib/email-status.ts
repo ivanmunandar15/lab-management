@@ -25,12 +25,4 @@ export function emailStatusMeta(l: Pick<EmailLog, "status" | "provider_message_i
   return { label: EMAIL_STATUS_LABEL.queued, tone: "yellow" };
 }
 
-/** Salin teks ke clipboard. false jika browser memblokir (mis. halaman bukan HTTPS). */
-export async function copyText(text: string): Promise<boolean> {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    return false;
-  }
-}
+export { copyText } from "./clipboard";

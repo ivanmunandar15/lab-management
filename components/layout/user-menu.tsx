@@ -1,12 +1,14 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { LogOut } from "lucide-react";
+import { KeyRound, LogOut } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ROLE_LABEL } from "@/lib/constants";
 import { getInitials } from "@/lib/utils";
 import type { ShellUser } from "./app-shell";
 
 export function UserMenu({ user }: { user: ShellUser }) {
+  const router = useRouter();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -28,6 +30,9 @@ export function UserMenu({ user }: { user: ShellUser }) {
           <span className="mt-0.5 block text-xs font-normal text-muted-foreground">Peran: {ROLE_LABEL[user.role]}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onSelect={() => router.push("/account")}>
+          <KeyRound /> Akun saya &amp; ubah password
+        </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => signOut({ callbackUrl: "/login" })} className="text-destructive">
           <LogOut /> Keluar
         </DropdownMenuItem>

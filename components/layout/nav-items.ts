@@ -44,3 +44,4 @@ export const BREADCRUMB_LABELS: Record<string, string> = Object.fromEntries(
 );
 // Segmen khusus
 BREADCRUMB_LABELS["forbidden"] = "Akses ditolak";
+BREADCRUMB_LABELS["account"] = "Akun Saya";

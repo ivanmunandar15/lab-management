@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { Pencil, UserCheck, UserPlus, UserX } from "lucide-react";
+import { KeyRound, Pencil, UserCheck, UserPlus, UserX } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { ROLE_LABEL } from "@/lib/constants";
 import { useRestoreUser, useSoftDeleteUser, useUsers } from "@/hooks/use-users";
 import { useCan } from "@/components/features/equipment/use-can";
 import { UserFormSheet } from "./user-form-sheet";
+import { ResetPasswordDialog } from "./reset-password-dialog";
 import { cn } from "@/lib/utils";
 import type { PublicUser, Role } from "@/types/erd";
 
@@ -26,6 +27,7 @@ export function UsersTable() {
   const [pending, setPending] = useState<{ users: PublicUser[]; clear: () => void } | null>(null);
   const [form, setForm] = useState<{ open: boolean; user: PublicUser | null }>({ open: false, user: null });
   const [toggle, setToggle] = useState<PublicUser | null>(null);
+  const [resetFor, setResetFor] = useState<PublicUser | null>(null);
 
   const columns = useMemo<ColumnDef<PublicUser>[]>(() => [
     { accessorKey: "name", header: "Nama", cell: ({ row }) => <span className="font-medium">{row.original.name}</span> },
@@ -58,6 +60,8 @@ export function UsersTable() {
         return (
           <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
             <Button size="sm" variant="ghost" aria-label={`Edit ${u.name}`} onClick={() => setForm({ open: true, user: u })}><Pencil /></Button>
+            <Button size="sm" variant="ghost" disabled={self || !u.is_active} aria-label={`Reset password ${u.name}`}
+              title={self ? "Ganti password sendiri lewat menu Akun saya" : !u.is_active ? "Akun nonaktif" : "Reset password"} onClick={() => setResetFor(u)}><KeyRound /></Button>
             <Button size="sm" variant="ghost" disabled={self && u.is_active} aria-label={`${u.is_active ? "Nonaktifkan" : "Aktifkan"} ${u.name}`}
               title={self && u.is_active ? "Akun sendiri tidak dapat dinonaktifkan" : undefined} onClick={() => setToggle(u)}>
               {u.is_active ? <UserX /> : <UserCheck />}
@@ -93,6 +97,7 @@ export function UsersTable() {
         emptyTitle="Belum ada pengguna"
         emptyDescription="Pengguna yang ditambahkan admin akan tampil di sini."
       />
+      <ResetPasswordDialog user={resetFor} onClose={() => setResetFor(null)} />
       <UserFormSheet open={form.open} onOpenChange={(o) => setForm((f) => ({ ...f, open: o }))} user={form.user} currentUserId={meId} />
       <ConfirmDialog
         open={!!toggle}

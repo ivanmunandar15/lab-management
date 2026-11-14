@@ -5,7 +5,7 @@ import { API_URL, clientIp, refreshWithBackend } from "@/lib/auth/backend";
 /**
  * Proxy sisi server ke backend (`${API_URL}/compat/...`).
  * Pengecualian: awalan `main/` meneruskan ke API utama (`${API_URL}/...`) HANYA untuk endpoint di MAIN_ALLOWLIST
- * (modul email yang tidak punya rute compat). Selain itu ditolak 403.
+ * (modul email dan password yang tidak punya rute compat). Selain itu ditolak 403.
  * - Token backend ada di JWT sesi terenkripsi (cookie httpOnly); proxy menambahkan `Authorization` dan
  *   TIDAK PERNAH mengirim token ke browser.
  * - Access token yang hampir kedaluwarsa di-refresh di sini, lalu cookie sesi ditulis ulang.
@@ -23,6 +23,9 @@ const MAIN_ALLOWLIST: { method: string; path: RegExp }[] = [
   { method: "GET", path: /^email-logs$/ },
   { method: "POST", path: /^email-logs\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/retry$/i },
   { method: "POST", path: /^admin\/email\/test$/ },
+  // Password: ganti milik sendiri, dan reset oleh admin (backend yang memeriksa role).
+  { method: "PATCH", path: /^auth\/me\/password$/ },
+  { method: "POST", path: /^users\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/reset-password$/i },
 ];
 
 const err = (status: number, code: string, message: string) => NextResponse.json({ error: { code, message } }, { status });
