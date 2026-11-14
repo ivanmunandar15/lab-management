@@ -1,8 +1,8 @@
 "use client";
-import { FlaskConical } from "lucide-react";
 import { motion } from "framer-motion";
 import { APP_NAME } from "@/lib/constants";
 import { StatusBadge } from "@/components/features/common/status-badge";
+import {  BrandLogo } from "@/components/layout/brand-logo";
 import type { EquipmentStatus } from "@/types/erd";
 
 const SAMPLE: { code: string; name: string; status: EquipmentStatus }[] = [
@@ -16,7 +16,7 @@ export function BrandPanel() {
     <div className="relative hidden flex-col justify-between overflow-hidden bg-[#0b2a6f] p-12 text-white lg:flex">
       <div className="flex items-center gap-3">
         <div className="flex size-10 items-center justify-center rounded-lg bg-white text-[#2563EB]">
-          <FlaskConical className="size-6" aria-hidden="true" />
+          <BrandLogo className="size-6" aria-hidden="true" />
         </div>
         <span className="text-lg font-semibold">{APP_NAME}</span>
       </div>

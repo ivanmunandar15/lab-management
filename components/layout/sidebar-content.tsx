@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronsLeft, ChevronsRight, FlaskConical } from "lucide-react";
+import {  BrandLogo } from "@/components/layout/brand-logo";
 import { cn } from "@/lib/utils";
 import { APP_NAME } from "@/lib/constants";
 import { getNavForRole, type NavItem } from "./nav-items";
@@ -41,8 +42,8 @@ export function SidebarContent({ role, collapsed, onNavigate, onToggleCollapse }
   return (
     <div className="flex h-full flex-col">
       <div className={cn("flex h-16 shrink-0 items-center gap-3 border-b px-4", collapsed && "justify-center px-0")}>
-        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-          <FlaskConical className="size-5" aria-hidden="true" />
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg text-primary-foreground">
+          <BrandLogo className="size-10" aria-hidden="true" />
         </div>
         {!collapsed && <span className="text-sm font-semibold leading-tight">{APP_NAME}</span>}
       </div>
