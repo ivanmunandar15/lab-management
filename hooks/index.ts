@@ -11,6 +11,7 @@ export * from "./use-documents";
 export * from "./use-notifications";
 export * from "./use-activity-logs";
 export * from "./use-email-logs";
+export * from "./use-responsibilities";
 export * from "./use-dashboard";
 export * from "./use-now";
 export * from "./use-reports";

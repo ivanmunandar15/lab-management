@@ -1,5 +1,5 @@
 import { apiMain, enc, qs } from "@/lib/api/client";
-import type { EmailLog, EmailLogPageMeta, EmailReminderType, EmailStatus, EmailTestResult } from "@/types/email";
+import type { EmailLog, EmailLogPageMeta, EmailReminderType, EmailStatus, EmailTestResult, ReminderEmailPreview, ReminderPreview, ReminderSendResult, ReminderUnassignedItem } from "@/types/email";
 
 export interface EmailLogListParams {
   page?: number;
@@ -27,6 +27,15 @@ export const emailService = {
   },
   /** Antrekan ulang email gagal (diproses di belakang layar; muat ulang daftar sesudahnya). */
   retry: async (id: string) => (await apiMain<{ email_log_id: string; status: "queued" }>(`email-logs/${enc(id)}/retry`, { method: "POST", body: {} })).data,
+  /** Pratinjau email pengingat kalibrasi yang AKAN dikirim (tanpa mengirim atau mencatat apa pun). */
+  previewReminders: async (): Promise<ReminderPreview> => {
+    const { data } = await apiMain<{ dry_run: true; emails: ReminderEmailPreview[]; unassigned?: ReminderUnassignedItem[]; mode: "auto" | "manual"; email_enabled: boolean }>(
+      "admin/jobs/calibration-reminders/run?dry_run=true", { method: "POST", body: {} });
+    return { emails: data.emails.map((e) => ({ ...e, role: e.role ?? null })), unassigned: data.unassigned ?? [], mode: data.mode, email_enabled: data.email_enabled, fetched_at: new Date().toISOString() };
+  },
+  /** Kirim (antrekan) email pengingat HANYA ke penerima terpilih. Status akhir ada di log email. */
+  sendReminders: async (userIds: string[]) =>
+    (await apiMain<ReminderSendResult>("admin/email/calibration-reminders/send", { method: "POST", body: { user_ids: userIds } })).data,
   /** Kirim email uji ke alamat akun admin yang sedang login. Sinkron: hasil SMTP langsung dikembalikan. */
   sendTest: async () => (await apiMain<EmailTestResult>("admin/email/test", { method: "POST", body: {} })).data,
 };

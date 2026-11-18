@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Bell, BellRing, CheckCheck, FlaskConical, Loader2 } from "lucide-react";
-import {  BrandLogo } from "@/components/layout/brand-logo";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -64,7 +63,7 @@ export function NotificationsPage() {
             {canGenerate && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" disabled={generate.isPending}>{generate.isPending ? <Loader2 className="animate-spin" /> : <BrandLogo className="size-4" />} Buat notifikasi</Button>
+                  <Button variant="outline" disabled={generate.isPending}>{generate.isPending ? <Loader2 className="animate-spin" /> : <FlaskConical />} Buat notifikasi</Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>Buat dari kondisi data saat ini</DropdownMenuLabel>

@@ -23,3 +23,15 @@ export const useSendTestEmail = () => {
     onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.emailLogs.all }),
   });
 };
+
+/** Pratinjau pengingat kalibrasi; hanya diambil saat dialog terbuka dan selalu data segar. */
+export const useReminderPreview = (enabled: boolean) =>
+  useQuery({ queryKey: [...queryKeys.emailLogs.all, "reminder-preview"], queryFn: () => emailService.previewReminders(), enabled, gcTime: 0, staleTime: 0, refetchOnWindowFocus: false, retry: false });
+
+export const useSendReminders = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (userIds: string[]) => emailService.sendReminders(userIds),
+    onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.emailLogs.all }),
+  });
+};

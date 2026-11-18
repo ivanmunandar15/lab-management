@@ -19,14 +19,25 @@ const REFRESH_SKEW_MS = 60_000;
 const FORWARD_HEADERS = ["content-type", "content-disposition", "content-length", "cache-control", "x-content-type-options", "content-security-policy"];
 
 /** Endpoint API utama (non-compat) yang boleh dijangkau lewat `main/...`. Tambah baris di sini hanya bila memang perlu. */
-const MAIN_ALLOWLIST: { method: string; path: RegExp }[] = [
+/** `query`: parameter yang HARUS persis bernilai itu (satu kali). Dipakai agar jalur job hanya bisa untuk pratinjau. */
+const MAIN_ALLOWLIST: { method: string; path: RegExp; query?: Record<string, string> }[] = [
   { method: "GET", path: /^email-logs$/ },
   { method: "POST", path: /^email-logs\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/retry$/i },
   { method: "POST", path: /^admin\/email\/test$/ },
+  // Email pengingat kalibrasi: pratinjau (dry_run=true WAJIB; tanpa itu job mengirim ke SEMUA penerima) dan kirim ke penerima terpilih.
+  { method: "POST", path: /^admin\/jobs\/calibration-reminders\/run$/, query: { dry_run: "true" } },
+  { method: "POST", path: /^admin\/email\/calibration-reminders\/send$/ },
+  // Penanggung jawab alat (penerima email pengingat): daftar + cakupan, tambah, hapus. Backend memeriksa role (tambah/hapus: admin).
+  { method: "GET", path: /^responsibilities$/ },
+  { method: "POST", path: /^responsibilities$/ },
+  { method: "DELETE", path: /^responsibilities\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i },
   // Password: ganti milik sendiri, dan reset oleh admin (backend yang memeriksa role).
   { method: "PATCH", path: /^auth\/me\/password$/ },
   { method: "POST", path: /^users\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/reset-password$/i },
 ];
+
+const queryMatches = (required: Record<string, string> | undefined, params: URLSearchParams) =>
+  !required || Object.entries(required).every(([k, v]) => { const all = params.getAll(k); return all.length === 1 && all[0] === v; });
 
 const err = (status: number, code: string, message: string) => NextResponse.json({ error: { code, message } }, { status });
 
@@ -37,7 +48,7 @@ async function handler(req: NextRequest, ctx: { params: Promise<{ path: string[]
   const isMain = path[0] === "main";
   const rest = isMain ? path.slice(1) : path;
   if (!rest.length) return err(400, "VALIDATION", "Path tidak valid");
-  if (isMain && (rest.some((p) => p.includes("/")) || !MAIN_ALLOWLIST.some((a) => a.method === req.method && a.path.test(rest.join("/"))))) {
+  if (isMain && (rest.some((p) => p.includes("/")) || !MAIN_ALLOWLIST.some((a) => a.method === req.method && a.path.test(rest.join("/")) && queryMatches(a.query, req.nextUrl.searchParams)))) {
     return err(403, "FORBIDDEN", "Endpoint tidak diizinkan lewat proxy");
   }
 

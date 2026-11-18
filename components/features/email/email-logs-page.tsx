@@ -20,6 +20,7 @@ import { queryKeys, useEmailLogs, useRetryEmail } from "@/hooks";
 import { EMAIL_STATUS_LABEL, emailStatusMeta, REMINDER_LABEL } from "@/lib/email-status";
 import type { EmailLog, EmailReminderType, EmailStatus } from "@/types/email";
 import { EmailLogDetailDialog } from "./email-log-detail-dialog";
+import { SendRemindersButton } from "./send-reminders-dialog";
 import { SendTestEmailButton } from "./send-test-email";
 
 const PAGE_SIZE = 20;
@@ -83,7 +84,7 @@ export function EmailLogsPage() {
       <PageHeader
         title="Log Email"
         description="Riwayat email pengingat dan email uji, beserta status pengiriman dan pesan error-nya. Email uji dikirim ke alamat akun Anda."
-        actions={<SendTestEmailButton />}
+        actions={<div className="flex flex-wrap gap-2"><SendRemindersButton /><SendTestEmailButton /></div>}
       />
 
       <p className="mb-4 flex items-start gap-2 text-xs text-muted-foreground">
