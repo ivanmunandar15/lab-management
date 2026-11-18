@@ -1,6 +1,6 @@
 import {
   Bell, ClipboardCheck, ClipboardList, DoorOpen, FileText, History, LayoutDashboard, Mail, ShieldCheck,
-  Microscope, Package, QrCode, Thermometer, Users, Wrench, type LucideIcon,
+  Microscope, Package, QrCode, Settings, Thermometer, Users, Wrench, type LucideIcon,
 } from "lucide-react";
 import { can, type Resource } from "@/lib/rbac";
 import type { Role } from "@/types/erd";
@@ -30,6 +30,7 @@ export const ADMIN_NAV: NavItem[] = [
   { label: "Users", href: "/users", icon: Users, resource: "user" },
   { label: "Activity Log", href: "/activity-log", icon: History, resource: "activity_log" },
   { label: "Log Email", href: "/email-logs", icon: Mail, resource: "email_log" },
+  { label: "Pengaturan Email", href: "/email-settings", icon: Settings, resource: "email_settings" },
   { label: "Penanggung Jawab", href: "/responsibilities", icon: ShieldCheck, resource: "responsibility" },
 ];
 

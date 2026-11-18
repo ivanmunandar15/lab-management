@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Info, Loader2, Mail, RotateCcw } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info, Loader2, Mail, RotateCcw, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -84,14 +85,14 @@ export function EmailLogsPage() {
       <PageHeader
         title="Log Email"
         description="Riwayat email pengingat dan email uji, beserta status pengiriman dan pesan error-nya. Email uji dikirim ke alamat akun Anda."
-        actions={<div className="flex flex-wrap gap-2"><SendRemindersButton /><SendTestEmailButton /></div>}
+        actions={<div className="flex flex-wrap gap-2"><Button variant="outline" asChild><Link href="/email-settings"><Settings /> Pengaturan</Link></Button><SendRemindersButton /><SendTestEmailButton /></div>}
       />
 
       <p className="mb-4 flex items-start gap-2 text-xs text-muted-foreground">
         <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
         <span>
           Email uji dikirim ke {session?.user?.email ? <strong className="break-all">{session.user.email}</strong> : "alamat akun yang sedang login"}.
-          Status &ldquo;Tidak dikirim (mode uji)&rdquo; berarti backend berjalan dengan EMAIL_ENABLED=false: email dicatat sebagai terkirim padahal tidak ada yang keluar.
+          Status &ldquo;Tidak dikirim (mode uji)&rdquo; berarti pengiriman email belum diaktifkan: email dicatat sebagai terkirim padahal tidak ada yang keluar. Aktifkan di <Link href="/email-settings" className="underline">Pengaturan Email</Link>.
         </span>
       </p>
 

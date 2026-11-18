@@ -32,10 +32,7 @@ function describeCameraError(err: unknown): string {
   return "Kamera tidak dapat dibuka.";
 }
 
-type TorchCapabilities = MediaTrackCapabilities & { torch?: boolean };
-type TorchTrack = Omit<MediaStreamTrack, "getCapabilities"> & {
-  getCapabilities?: () => TorchCapabilities;
-};
+type TorchTrack = MediaStreamTrack & { getCapabilities?: () => MediaTrackCapabilities & { torch?: boolean } };
 
 /** Tampilan kamera dengan bingkai pemindai, senter, dan ganti kamera. */
 export function QrScannerView({ onDetect, paused, onCameraUnavailable, hint = "Arahkan kamera ke QR pada alat", className }: Props) {
@@ -106,8 +103,7 @@ export function QrScannerView({ onDetect, paused, onCameraUnavailable, hint = "A
           paused={paused}
           formats={["qr_code"]}
           constraints={{ facingMode: { ideal: facing } }}
-          sound={false}
-          components={{ finder: false }}
+          components={{ audio: false, finder: false }}
           styles={{ container: { width: "100%", height: "100%" }, video: { objectFit: "cover" } }}
         />
       )}

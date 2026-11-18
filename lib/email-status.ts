@@ -12,7 +12,7 @@ export const REMINDER_LABEL: Record<EmailReminderType, string> = {
 
 export const EMAIL_STATUS_LABEL: Record<EmailStatus, string> = { queued: "Antre", sent: "Terkirim", failed: "Gagal" };
 
-/** Nilai `provider_message_id` yang dicatat backend saat EMAIL_ENABLED=false. */
+/** Nilai `provider_message_id` yang dicatat backend saat pengiriman email dinonaktifkan (Pengaturan Email atau EMAIL_ENABLED=false). */
 export const DEV_LOG_MESSAGE_ID = "dev-log";
 
 /** Dicatat `sent`, tetapi sebenarnya tidak ada email yang keluar (backend dalam mode uji). */

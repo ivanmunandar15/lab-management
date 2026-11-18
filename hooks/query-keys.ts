@@ -30,5 +30,6 @@ export const queryKeys = {
   },
   activityLogs: entityKeys("activity-logs"),
   emailLogs: entityKeys("email-logs"),
+  emailSettings: entityKeys("email-settings"),
   responsibilities: entityKeys("responsibilities"),
 };

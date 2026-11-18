@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { AlertTriangle, CheckCircle2, Copy, Loader2, Send, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -60,7 +61,7 @@ function Result({ outcome, onCopy, onClose }: { outcome: Outcome; onCopy: () => 
     if (r.status === "failed") {
       icon = <XCircle className="size-5 text-destructive" aria-hidden="true" />;
       title = "Pengiriman gagal";
-      body = <p>Email uji ke <strong className="break-all">{r.to}</strong> gagal dikirim. Periksa pengaturan SMTP di backend (SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS, MAIL_FROM).</p>;
+      body = <p>Email uji ke <strong className="break-all">{r.to}</strong> gagal dikirim. Periksa server SMTP (host, port, SSL/TLS, username, password, pengirim) di <Link href="/email-settings" className="underline">Pengaturan Email</Link>, lalu coba lagi.</p>;
       raw = r.error_message;
     } else if (r.status === "missing") {
       icon = <AlertTriangle className="size-5 text-yellow-600" aria-hidden="true" />;
@@ -69,7 +70,7 @@ function Result({ outcome, onCopy, onClose }: { outcome: Outcome; onCopy: () => 
     } else if (!r.email_enabled) {
       icon = <AlertTriangle className="size-5 text-yellow-600" aria-hidden="true" />;
       title = "Email TIDAK dikirim (mode uji)";
-      body = <p>Backend berjalan dengan <code>EMAIL_ENABLED=false</code>, sehingga tidak ada email yang keluar ke <strong className="break-all">{r.to}</strong>; isinya hanya dicatat di log server. Setel <code>EMAIL_ENABLED=true</code> dan isi pengaturan SMTP untuk pengiriman nyata.</p>;
+      body = <p>Pengiriman email belum diaktifkan, sehingga tidak ada email yang keluar ke <strong className="break-all">{r.to}</strong>; isinya hanya dicatat di log server. Aktifkan &ldquo;Kirim email sungguhan&rdquo; dan isi server SMTP di <Link href="/email-settings" className="underline">Pengaturan Email</Link>.</p>;
     } else {
       body = <p>Email uji dikirim ke <strong className="break-all">{r.to}</strong>. Periksa kotak masuk (dan folder spam).</p>;
     }

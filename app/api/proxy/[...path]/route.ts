@@ -27,6 +27,11 @@ const MAIN_ALLOWLIST: { method: string; path: RegExp; query?: Record<string, str
   // Email pengingat kalibrasi: pratinjau (dry_run=true WAJIB; tanpa itu job mengirim ke SEMUA penerima) dan kirim ke penerima terpilih.
   { method: "POST", path: /^admin\/jobs\/calibration-reminders\/run$/, query: { dry_run: "true" } },
   { method: "POST", path: /^admin\/email\/calibration-reminders\/send$/ },
+  // Pengaturan email (mode auto/manual, SMTP, jam job): baca, ubah, kembalikan ke default .env, tes koneksi. Backend memeriksa role (admin).
+  { method: "GET", path: /^admin\/settings\/email$/ },
+  { method: "PATCH", path: /^admin\/settings\/email$/ },
+  { method: "DELETE", path: /^admin\/settings\/email$/ },
+  { method: "POST", path: /^admin\/settings\/email\/test-connection$/ },
   // Penanggung jawab alat (penerima email pengingat): daftar + cakupan, tambah, hapus. Backend memeriksa role (tambah/hapus: admin).
   { method: "GET", path: /^responsibilities$/ },
   { method: "POST", path: /^responsibilities$/ },

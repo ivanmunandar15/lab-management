@@ -105,13 +105,13 @@ function SendRemindersDialog({ open, onClose }: { open: boolean; onClose: () => 
           <>
             {!preview.data.email_enabled && (
               <Notice tone="warn" icon={<AlertTriangle className="size-4" aria-hidden="true" />}>
-                Backend dalam mode uji (<code>EMAIL_ENABLED=false</code>): email dicatat sebagai terkirim, tetapi <strong>tidak benar-benar dikirim</strong>.
+                Pengiriman email belum diaktifkan (mode uji): email dicatat sebagai terkirim, tetapi <strong>tidak benar-benar dikirim</strong>. Aktifkan di <Link href="/email-settings" className="underline">Pengaturan Email</Link>.
               </Notice>
             )}
             {preview.data.mode === "auto" ? (
               <Notice tone="warn" icon={<AlertTriangle className="size-4" aria-hidden="true" />}>
-                Pengiriman <strong>otomatis harian (07:00) masih aktif</strong> (<code>CALIBRATION_EMAIL_MODE=auto</code>). Email yang tidak Anda pilih di sini
-                tetap akan dikirim oleh jadwal harian. Agar hanya email pilihan Anda yang terkirim, setel <code>CALIBRATION_EMAIL_MODE=manual</code> di backend.
+                Pengiriman <strong>otomatis harian masih aktif</strong> (mode Otomatis). Email yang tidak Anda pilih di sini
+                tetap akan dikirim oleh jadwal harian. Agar hanya email pilihan Anda yang terkirim, ubah mode ke Manual di <Link href="/email-settings" className="underline">Pengaturan Email</Link>.
               </Notice>
             ) : (
               <Notice tone="info" icon={<Info className="size-4" aria-hidden="true" />}>
@@ -275,7 +275,7 @@ function ResultView({ result, onCopy, onClose }: { result: ReminderSendResult; o
       </ul>
       {!result.email_enabled && (
         <Notice tone="warn" icon={<AlertTriangle className="size-4" aria-hidden="true" />}>
-          Backend dalam mode uji (<code>EMAIL_ENABLED=false</code>): email dicatat sebagai terkirim, tetapi <strong>tidak benar-benar dikirim</strong>.
+          Pengiriman email belum diaktifkan (mode uji): email dicatat sebagai terkirim, tetapi <strong>tidak benar-benar dikirim</strong>. Aktifkan di <Link href="/email-settings" className="underline">Pengaturan Email</Link>.
         </Notice>
       )}
       <div className="flex flex-wrap justify-end gap-2">

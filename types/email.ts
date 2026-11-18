@@ -15,7 +15,7 @@ export interface EmailLog {
   status: EmailStatus;
   attempts: number;
   error_message: string | null;
-  /** "dev-log" = EMAIL_ENABLED=false di backend: dicatat sebagai terkirim, padahal TIDAK dikirim. */
+  /** "dev-log" = pengiriman email nonaktif di backend: dicatat sebagai terkirim, padahal TIDAK dikirim. */
   provider_message_id: string | null;
   created_at: string;
   sent_at: string | null;
@@ -75,7 +75,7 @@ export interface ReminderPreview {
   unassigned: ReminderUnassignedItem[];
   /** auto = job harian juga mengirim otomatis; manual = hanya lewat pengiriman terpilih. */
   mode: "auto" | "manual";
-  /** false = backend dalam mode uji: email dicatat terkirim tetapi tidak benar-benar dikirim. */
+  /** false = pengiriman email nonaktif (mode uji): email dicatat terkirim tetapi tidak benar-benar dikirim. */
   email_enabled: boolean;
   /** Waktu pratinjau diambil (sisi klien). */
   fetched_at: string;
@@ -92,4 +92,41 @@ export interface ReminderSendResult {
   /** Jumlah alat jatuh tempo tanpa penerima (tidak dikirim ke siapa pun). */
   unassigned?: number;
   email_enabled: boolean;
+}
+
+/* ───────── Pengaturan email (GET/PATCH/DELETE /admin/settings/email) ───────── */
+export type CalibrationEmailMode = "auto" | "manual";
+
+export interface EmailSettings {
+  email_enabled: boolean;
+  calibration_email_mode: CalibrationEmailMode;
+  /** Pengingat terlambat diulang tiap N hari (1–30). */
+  overdue_repeat_days: number;
+  /** Jam job harian, HH:mm (zona waktu server). */
+  calibration_job_time: string;
+  smtp_host: string;
+  smtp_port: number;
+  smtp_secure: boolean;
+  smtp_user: string;
+  mail_from: string;
+  frontend_url: string;
+}
+
+/** Nilai efektif dari server. Password SMTP tidak pernah dikirim balik; `smtp_pass_set` menandakan sudah terisi. */
+export interface EmailSettingsView extends EmailSettings {
+  smtp_pass_set: boolean;
+  /** true = belum pernah diubah dari sini; semua nilai berasal dari .env backend. */
+  using_defaults: boolean;
+  updated_at: string | null;
+}
+
+/** PATCH parsial. `smtp_pass` kosong/tidak dikirim = password lama tetap; `clear_smtp_pass` menghapusnya. */
+export type EmailSettingsPatch = Partial<EmailSettings> & { smtp_pass?: string; clear_smtp_pass?: boolean };
+
+/** Hasil POST /admin/settings/email/test-connection (selalu HTTP 200; lihat `ok`). */
+export interface SmtpTestResult {
+  ok: boolean;
+  host: string;
+  port: number;
+  error: string | null;
 }

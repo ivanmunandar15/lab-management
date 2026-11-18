@@ -1,5 +1,5 @@
 import { apiMain, enc, qs } from "@/lib/api/client";
-import type { EmailLog, EmailLogPageMeta, EmailReminderType, EmailStatus, EmailTestResult, ReminderEmailPreview, ReminderPreview, ReminderSendResult, ReminderUnassignedItem } from "@/types/email";
+import type { EmailLog, EmailLogPageMeta, EmailReminderType, EmailSettingsPatch, EmailSettingsView, EmailStatus, EmailTestResult, ReminderEmailPreview, ReminderPreview, ReminderSendResult, ReminderUnassignedItem, SmtpTestResult } from "@/types/email";
 
 export interface EmailLogListParams {
   page?: number;
@@ -38,4 +38,12 @@ export const emailService = {
     (await apiMain<ReminderSendResult>("admin/email/calibration-reminders/send", { method: "POST", body: { user_ids: userIds } })).data,
   /** Kirim email uji ke alamat akun admin yang sedang login. Sinkron: hasil SMTP langsung dikembalikan. */
   sendTest: async () => (await apiMain<EmailTestResult>("admin/email/test", { method: "POST", body: {} })).data,
+  /** Pengaturan email saat ini (default .env + yang disimpan dari halaman Pengaturan Email). */
+  getSettings: async () => (await apiMain<EmailSettingsView>("admin/settings/email")).data,
+  /** Ubah sebagian pengaturan; berlaku langsung di server tanpa restart. */
+  updateSettings: async (patch: EmailSettingsPatch) => (await apiMain<EmailSettingsView>("admin/settings/email", { method: "PATCH", body: patch })).data,
+  /** Hapus pengaturan tersimpan: kembali memakai nilai dari .env backend. */
+  resetSettings: async () => (await apiMain<EmailSettingsView>("admin/settings/email", { method: "DELETE" })).data,
+  /** Tes koneksi + login ke server SMTP (tidak mengirim email). */
+  testSmtp: async () => (await apiMain<SmtpTestResult>("admin/settings/email/test-connection", { method: "POST", body: {} })).data,
 };

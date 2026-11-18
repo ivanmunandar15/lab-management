@@ -47,7 +47,7 @@ export function EmailLogDetailDialog({ log, onClose, onRetry, retrying }: Props)
             </dl>
             {isNotActuallySent(log) && (
               <p role="note" className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900 dark:border-yellow-500/30 dark:bg-yellow-500/10 dark:text-yellow-200">
-                Backend sedang dalam mode uji (EMAIL_ENABLED=false): email ini dicatat sebagai terkirim, tetapi <strong>tidak benar-benar dikirim</strong>.
+                Pengiriman email sedang dalam mode uji: email ini dicatat sebagai terkirim, tetapi <strong>tidak benar-benar dikirim</strong>. Aktifkan di menu Pengaturan Email.
               </p>
             )}
             {log.error_message && (
