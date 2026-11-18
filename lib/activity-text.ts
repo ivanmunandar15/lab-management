@@ -11,7 +11,7 @@ const ACTION_VERB: Record<string, string> = {
 export const ENTITY_LABEL: Record<string, string> = {
   equipment: "alat",
   supporting_equipment: "alat pendukung",
-  borrowing: "peminjaman",
+  borrowing: "penggunaan",
   calibration: "kalibrasi",
   maintenance: "maintenance",
   user: "pengguna",

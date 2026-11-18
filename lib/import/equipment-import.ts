@@ -5,7 +5,7 @@ import { triggerDownload } from "@/lib/qr";
 import type { Condition, EquipmentStatus, Room } from "@/types/erd";
 
 /** Kolom yang boleh tidak ada di file. */
-const OPTIONAL_HEADERS: readonly string[] = ["condition", "purchase_date", "purchase_price", "useful_life_years", "specifications", "next_calibration_date"];
+const OPTIONAL_HEADERS: readonly string[] = ["equipment_type", "brand", "model", "condition", "purchase_date", "purchase_price", "useful_life_years", "specifications", "next_calibration_date"];
 
 export const IMPORT_HEADERS = [
   "inventory_code", "equipment_name", "equipment_type", "brand", "model", "room_code", "status", "condition",

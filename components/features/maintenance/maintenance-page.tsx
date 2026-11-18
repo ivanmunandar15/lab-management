@@ -29,7 +29,7 @@ const VIEWS: { id: View; label: string; icon: typeof Table2 }[] = [
 
 const CONFIRM_TEXT: Record<MaintenanceStatus, string> = {
   scheduled: "",
-  in_progress: "Status alat akan berubah menjadi Perawatan dan alat tidak dapat dipinjam selama maintenance berlangsung.",
+  in_progress: "Status alat akan berubah menjadi Perawatan dan alat tidak dapat digunakan selama maintenance berlangsung.",
   completed: "Tanggal selesai dicatat sekarang dan status alat dikembalikan menjadi Tersedia.",
   cancelled: "Maintenance dibatalkan. Jika sedang berlangsung, alat dikembalikan menjadi Tersedia. Status akhir ini tidak dapat diubah lagi.",
 };

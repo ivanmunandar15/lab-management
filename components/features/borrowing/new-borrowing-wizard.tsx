@@ -104,14 +104,14 @@ export function NewBorrowingWizard({ open, onOpenChange }: { open: boolean; onOp
     const values = form.getValues();
     try {
       await create.mutateAsync(toCreateBorrowingInput(values, userId, selectedEq, spLines.map(([id, quantity]) => ({ supporting_equipment_id: id, quantity }))));
-      toast.success("Peminjaman berhasil dicatat", { description: `${totalItems} item dipinjam.` });
+      toast.success("Penggunaan berhasil dicatat", { description: `${totalItems} item digunakan.` });
       onOpenChange(false);
     } catch (e) {
       if (e instanceof ServiceError && e.code === "CONFLICT") {
         toast.error(e.message, { description: "Data alat berubah. Kembali ke langkah 1 untuk memperbarui pilihan." });
         setStep(0);
       } else {
-        toast.error(e instanceof Error ? e.message : "Peminjaman gagal disimpan");
+        toast.error(e instanceof Error ? e.message : "Penggunaan gagal disimpan");
       }
     }
   }
@@ -125,7 +125,7 @@ export function NewBorrowingWizard({ open, onOpenChange }: { open: boolean; onOp
     <>
       <BottomSheet
         open={open} onOpenChange={(o) => !pending && onOpenChange(o)} size="lg"
-        title="Peminjaman Baru" description={`Langkah ${step + 1} dari ${STEPS.length}: ${STEPS[step]}`}
+        title="Penggunaan Baru" description={`Langkah ${step + 1} dari ${STEPS.length}: ${STEPS[step]}`}
         footer={
           <div className="flex gap-2">
             <Button type="button" variant="outline" className="h-12 flex-1 sm:h-10" disabled={pending} onClick={() => (step === 0 ? onOpenChange(false) : setStep((s) => s - 1))}>
@@ -137,7 +137,7 @@ export function NewBorrowingWizard({ open, onOpenChange }: { open: boolean; onOp
               </Button>
             ) : (
               <Button type="button" className="h-12 flex-[2] text-base sm:h-10 sm:text-sm" disabled={pending} onClick={submit}>
-                {pending && <Loader2 className="animate-spin" />} Konfirmasi peminjaman
+                {pending && <Loader2 className="animate-spin" />} Konfirmasi penggunaan
               </Button>
             )}
           </div>
@@ -167,7 +167,7 @@ export function NewBorrowingWizard({ open, onOpenChange }: { open: boolean; onOp
 
         {step === 0 && !listLoading && !listError && (
           eqShown.length === 0 ? (
-            <EmptyState icon={Microscope} title={q ? "Tidak ada alat yang cocok" : "Tidak ada alat tersedia"} description={q ? "Ubah kata kunci pencarian." : "Semua alat sedang dipinjam, dirawat, rusak, atau kalibrasinya terlambat. Anda masih bisa melanjutkan dengan item pendukung."} />
+            <EmptyState icon={Microscope} title={q ? "Tidak ada alat yang cocok" : "Tidak ada alat tersedia"} description={q ? "Ubah kata kunci pencarian." : "Semua alat sedang digunakan, dirawat, rusak, atau kalibrasinya terlambat. Anda masih bisa melanjutkan dengan item pendukung."} />
           ) : (
             <ul className="space-y-2" aria-label="Alat tersedia">
               {eqShown.map((e) => {
@@ -246,7 +246,7 @@ export function NewBorrowingWizard({ open, onOpenChange }: { open: boolean; onOp
               <InfoRow label="Perkiraan kembali">{new Date(values.expected_return_time).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}</InfoRow>
               {values.notes && <InfoRow label="Catatan">{values.notes}</InfoRow>}
             </dl>
-            <p className="text-xs text-muted-foreground">Dengan menekan “Konfirmasi peminjaman”, status alat berubah menjadi Dipinjam dan stok item pendukung berkurang.</p>
+            <p className="text-xs text-muted-foreground">Dengan menekan “Konfirmasi penggunaan”, status alat berubah menjadi Digunakan dan stok item pendukung berkurang.</p>
           </div>
         )}
       </BottomSheet>

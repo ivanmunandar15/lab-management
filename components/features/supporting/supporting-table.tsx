@@ -21,7 +21,7 @@ import { SupportingImportDialog } from "./supporting-import-dialog";
 import type { Condition, SupportingEquipment, SupportingStatus } from "@/types/erd";
 
 const STATUS_OPTIONS: { value: SupportingStatus; label: string }[] = [
-  { value: "available", label: "Tersedia" }, { value: "borrowed", label: "Dipinjam" }, { value: "damaged", label: "Rusak" },
+  { value: "available", label: "Tersedia" }, { value: "borrowed", label: "Digunakan" }, { value: "damaged", label: "Rusak" },
 ];
 
 export function SupportingTable() {
@@ -35,7 +35,7 @@ export function SupportingTable() {
   const [selected, setSelected] = useState<SupportingEquipment[]>([]);
   const [toDelete, setToDelete] = useState<SupportingEquipment | null>(null);
   const [importOpen, setImportOpen] = useState(false);
-  const types = useMemo(() => [...new Set(data.map((s) => s.item_type))].sort(), [data]);
+  const types = useMemo(() => [...new Set(data.map((s) => s.item_type).filter(Boolean))].sort(), [data]);
 
   const columns = useMemo<ColumnDef<SupportingEquipment>[]>(() => [
     { accessorKey: "item_code", header: "Kode", cell: ({ getValue }) => <span className="font-mono text-xs">{getValue<string>()}</span> },
@@ -48,10 +48,12 @@ export function SupportingTable() {
         </div>
       ),
     },
-    { accessorKey: "item_type", header: "Jenis" },
+    { accessorKey: "item_type", header: "Jenis", cell: ({ getValue }) => getValue<string>() || "—" },
     {
-      id: "brand_model", header: "Merek / Model", accessorFn: (s) => `${s.brand} ${s.model}`,
-      cell: ({ row }) => <span className="whitespace-nowrap">{row.original.brand} <span className="text-muted-foreground">{row.original.model}</span></span>,
+      id: "brand_model", header: "Merek / Model", accessorFn: (s) => `${s.brand} ${s.model}`.trim(),
+      cell: ({ row }) => (row.original.brand || row.original.model)
+        ? <span className="whitespace-nowrap">{row.original.brand} <span className="text-muted-foreground">{row.original.model}</span></span>
+        : "—",
     },
     {
       id: "stock", header: "Stok", accessorFn: (s) => s.available_quantity / Math.max(1, s.total_quantity),

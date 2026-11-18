@@ -13,7 +13,7 @@ function Pill({ meta, className }: { meta: BadgeMeta; className?: string }) {
   );
 }
 
-/** Status alat / peminjaman. Label teks selalu ada, tidak hanya warna. */
+/** Status alat / penggunaan. Label teks selalu ada, tidak hanya warna. */
 export function StatusBadge({ status, className }: { status: AnyStatus; className?: string }) {
   return <Pill meta={STATUS_META[status]} className={className} />;
 }

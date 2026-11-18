@@ -12,13 +12,13 @@ export function BorrowingTrendChart() {
 
   return (
     <DashboardPanel
-      title="Tren peminjaman"
-      description={data ? `${total} peminjaman dalam 6 bulan terakhir.` : "Jumlah peminjaman per bulan."}
+      title="Tren penggunaan"
+      description={data ? `${total} penggunaan dalam 6 bulan terakhir.` : "Jumlah penggunaan per bulan."}
       isLoading={isLoading}
       isError={isError}
       onRetry={() => refetch()}
       isEmpty={total === 0}
-      empty={{ icon: TrendingUp, title: "Belum ada peminjaman", description: "Tren muncul setelah ada peminjaman dalam 6 bulan terakhir." }}
+      empty={{ icon: TrendingUp, title: "Belum ada penggunaan", description: "Tren muncul setelah ada penggunaan dalam 6 bulan terakhir." }}
       skeletonRows={1}
       skeletonClassName="h-56"
     >
@@ -30,12 +30,12 @@ export function BorrowingTrendChart() {
                 <CartesianGrid stroke={GRID_STROKE} strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="label" tick={AXIS_TICK} tickLine={false} axisLine={false} />
                 <YAxis allowDecimals={false} tick={AXIS_TICK} tickLine={false} axisLine={false} />
-                <Tooltip {...TOOLTIP_STYLE} labelFormatter={(_, p) => p?.[0]?.payload?.full_label ?? ""} formatter={(v: number) => [`${v} peminjaman`, "Jumlah"]} />
-                <Line type="monotone" dataKey="borrowings" name="Peminjaman" stroke="hsl(var(--primary))" strokeWidth={2.5} dot={{ r: 4, fill: "hsl(var(--primary))" }} activeDot={{ r: 6 }} />
+                <Tooltip {...TOOLTIP_STYLE} labelFormatter={(_, p) => p?.[0]?.payload?.full_label ?? ""} formatter={(v: number) => [`${v} penggunaan`, "Jumlah"]} />
+                <Line type="monotone" dataKey="borrowings" name="Penggunaan" stroke="hsl(var(--primary))" strokeWidth={2.5} dot={{ r: 4, fill: "hsl(var(--primary))" }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
-          <p className="sr-only">{data.map((p) => `${p.full_label}: ${p.borrowings} peminjaman`).join(". ")}</p>
+          <p className="sr-only">{data.map((p) => `${p.full_label}: ${p.borrowings} penggunaan`).join(". ")}</p>
         </>
       )}
     </DashboardPanel>

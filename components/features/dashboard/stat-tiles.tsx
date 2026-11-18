@@ -29,7 +29,7 @@ const statusTile = (status: EquipmentStatus, icon: LucideIcon): Tile => ({
   href: `/equipment?status=${status}`,
 });
 
-// "Total" memakai warna netral (slate) agar tidak tertukar dengan arti biru = dipinjam.
+// "Total" memakai warna netral (slate) agar tidak tertukar dengan arti biru = digunakan.
 const TILES: Tile[] = [
   { key: "total", title: "Total alat", icon: Boxes, tone: "slate", href: "/equipment" },
   statusTile("available", CheckCircle2),

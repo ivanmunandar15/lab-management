@@ -36,7 +36,7 @@ export function EquipmentTable() {
 
   const roomMap = useMemo(() => new Map(rooms.map((r) => [r.room_id, r])), [rooms]);
   const roomName = (id: string) => roomMap.get(id)?.room_name ?? "—";
-  const types = useMemo(() => [...new Set(data.map((e) => e.equipment_type))].sort(), [data]);
+  const types = useMemo(() => [...new Set(data.map((e) => e.equipment_type).filter(Boolean))].sort(), [data]);
 
   const columns = useMemo<ColumnDef<Equipment>[]>(() => [
     { accessorKey: "inventory_code", header: "Kode", cell: ({ getValue }) => <span className="font-mono text-xs">{getValue<string>()}</span> },
@@ -51,10 +51,12 @@ export function EquipmentTable() {
         </div>
       ),
     },
-    { accessorKey: "equipment_type", header: "Tipe" },
+    { accessorKey: "equipment_type", header: "Tipe", cell: ({ getValue }) => getValue<string>() || "—" },
     {
-      id: "brand_model", header: "Merek / Model", accessorFn: (e) => `${e.brand} ${e.model}`,
-      cell: ({ row }) => <span className="whitespace-nowrap">{row.original.brand} <span className="text-muted-foreground">{row.original.model}</span></span>,
+      id: "brand_model", header: "Merek / Model", accessorFn: (e) => `${e.brand} ${e.model}`.trim(),
+      cell: ({ row }) => (row.original.brand || row.original.model)
+        ? <span className="whitespace-nowrap">{row.original.brand} <span className="text-muted-foreground">{row.original.model}</span></span>
+        : "—",
     },
     { id: "room_id", header: "Ruangan", accessorFn: (e) => e.room_id, cell: ({ row }) => roomName(row.original.room_id) },
     { accessorKey: "status", header: "Status", cell: ({ getValue }) => <StatusBadge status={getValue<EquipmentStatus>()} /> },

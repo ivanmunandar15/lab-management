@@ -96,7 +96,7 @@ export function EquipmentForm({ equipment }: { equipment?: Equipment }) {
             <Field label="Nama alat" htmlFor="equipment_name" error={errors.equipment_name?.message}>
               <Input id="equipment_name" aria-invalid={!!errors.equipment_name} {...register("equipment_name")} />
             </Field>
-            <Field label="Jenis alat" htmlFor="equipment_type" error={errors.equipment_type?.message}>
+            <Field label="Jenis alat" htmlFor="equipment_type" error={errors.equipment_type?.message} hint="Opsional.">
               <Input id="equipment_type" aria-invalid={!!errors.equipment_type} {...register("equipment_type")} />
             </Field>
             <Field label="Ruangan" htmlFor="room_id" error={errors.room_id?.message}>
@@ -105,10 +105,10 @@ export function EquipmentForm({ equipment }: { equipment?: Equipment }) {
                 {rooms.map((r) => <option key={r.room_id} value={r.room_id}>{r.room_code} — {r.room_name}</option>)}
               </NativeSelect>
             </Field>
-            <Field label="Merek" htmlFor="brand" error={errors.brand?.message}>
+            <Field label="Merek" htmlFor="brand" error={errors.brand?.message} hint="Opsional.">
               <Input id="brand" aria-invalid={!!errors.brand} {...register("brand")} />
             </Field>
-            <Field label="Model" htmlFor="model" error={errors.model?.message}>
+            <Field label="Model" htmlFor="model" error={errors.model?.message} hint="Opsional.">
               <Input id="model" aria-invalid={!!errors.model} {...register("model")} />
             </Field>
             <Field label="Status" htmlFor="status" error={errors.status?.message}>

@@ -94,7 +94,7 @@ export function ReturnBorrowingSheet({ open, onOpenChange, borrowing, only, onSu
       });
       const severe = values.lines.some((l) => l.has_damage && l.final_condition === "major_damage");
       if (severe) toast.warning("Pengembalian dicatat", { description: "Ada kerusakan berat. SPV dan teknisi sudah diberi notifikasi." });
-      else toast.success("Pengembalian berhasil dicatat", { description: result.borrowing_status === "returned" ? "Seluruh item sudah kembali. Peminjaman selesai." : "Masih ada item yang belum dikembalikan." });
+      else toast.success("Pengembalian berhasil dicatat", { description: result.borrowing_status === "returned" ? "Seluruh item sudah kembali. Penggunaan selesai." : "Masih ada item yang belum dikembalikan." });
       onOpenChange(false);
       onSuccess?.();
     } catch (e) {
@@ -146,7 +146,7 @@ export function ReturnBorrowingSheet({ open, onOpenChange, borrowing, only, onSu
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <p className="text-sm font-medium">Jumlah dikembalikan</p>
-                      <p className="text-xs text-muted-foreground">Sisa dipinjam: {field.max_quantity} {meta.unit}</p>
+                      <p className="text-xs text-muted-foreground">Sisa digunakan: {field.max_quantity} {meta.unit}</p>
                     </div>
                     <Controller control={form.control} name={`lines.${i}.quantity`} render={({ field: f }) => (
                       <QuantityStepper label={`jumlah ${meta.name} dikembalikan`} value={f.value} onChange={f.onChange} min={0} max={field.max_quantity} unit={meta.unit} />

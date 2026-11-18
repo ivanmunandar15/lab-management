@@ -17,7 +17,7 @@ import { useCreateSupportingEquipment, useUpdateSupportingEquipment } from "@/ho
 import type { Condition, SupportingEquipment } from "@/types/erd";
 
 const EMPTY: CreateSupportingEquipmentInput = {
-  item_code: "", item_name: "", item_type: "", brand: "", model: "", unit: "pcs", total_quantity: 1,
+  item_code: "", item_name: "", item_type: "", brand: "", model: "", unit: "pcs", total_quantity: 0,
   condition: "good", description: "", specifications: "",
 };
 
@@ -61,7 +61,7 @@ export function SupportingForm({ item }: { item?: SupportingEquipment }) {
       }
       if (editing) {
         if (values.total_quantity < borrowed) {
-          setError("total_quantity", { message: `Tidak boleh kurang dari jumlah yang sedang dipinjam (${borrowed})` });
+          setError("total_quantity", { message: `Tidak boleh kurang dari jumlah yang sedang digunakan (${borrowed})` });
           return;
         }
         await update.mutateAsync({ id: item.supporting_equipment_id, data: values });
@@ -83,28 +83,28 @@ export function SupportingForm({ item }: { item?: SupportingEquipment }) {
           <CardContent className="grid gap-4 sm:grid-cols-2">
             <Field label="Kode item" htmlFor="item_code" error={errors.item_code?.message}><Input id="item_code" aria-invalid={!!errors.item_code} {...register("item_code")} /></Field>
             <Field label="Nama item" htmlFor="item_name" error={errors.item_name?.message}><Input id="item_name" aria-invalid={!!errors.item_name} {...register("item_name")} /></Field>
-            <Field label="Jenis item" htmlFor="item_type" error={errors.item_type?.message}><Input id="item_type" aria-invalid={!!errors.item_type} {...register("item_type")} /></Field>
+            <Field label="Jenis item" htmlFor="item_type" error={errors.item_type?.message} hint="Opsional."><Input id="item_type" aria-invalid={!!errors.item_type} {...register("item_type")} /></Field>
             <Field label="Kondisi" htmlFor="condition" error={errors.condition?.message} hint="Kondisi rusak berat membuat status item menjadi Rusak.">
               <NativeSelect id="condition" className="w-full" {...register("condition")}>
                 {(Object.keys(CONDITION_META) as Condition[]).map((c) => <option key={c} value={c}>{CONDITION_META[c].label}</option>)}
               </NativeSelect>
             </Field>
-            <Field label="Merek" htmlFor="brand" error={errors.brand?.message}><Input id="brand" aria-invalid={!!errors.brand} {...register("brand")} /></Field>
-            <Field label="Model (opsional)" htmlFor="model" error={errors.model?.message}><Input id="model" {...register("model")} /></Field>
+            <Field label="Merek" htmlFor="brand" error={errors.brand?.message} hint="Opsional."><Input id="brand" aria-invalid={!!errors.brand} {...register("brand")} /></Field>
+            <Field label="Model" htmlFor="model" error={errors.model?.message} hint="Opsional."><Input id="model" {...register("model")} /></Field>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader><CardTitle>Stok</CardTitle></CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
-            <Field label="Satuan" htmlFor="unit" error={errors.unit?.message}><Input id="unit" placeholder="pcs, set, botol…" aria-invalid={!!errors.unit} {...register("unit")} /></Field>
+            <Field label="Satuan" htmlFor="unit" error={errors.unit?.message} hint="Opsional. Kosong = pcs."><Input id="unit" placeholder="pcs, set, botol…" aria-invalid={!!errors.unit} {...register("unit")} /></Field>
             <Field label="Jumlah total" htmlFor="total_quantity" error={errors.total_quantity?.message}
-              hint={editing ? `Sedang dipinjam: ${borrowed}. Jumlah tersedia ikut menyesuaikan.` : "Jumlah tersedia awal otomatis sama dengan jumlah total."}>
-              <Input id="total_quantity" type="number" min={1} step={1} aria-invalid={!!errors.total_quantity}
-                {...register("total_quantity", { setValueAs: (v: string) => (v === "" || v == null ? NaN : Number(v)) })} />
+              hint={editing ? `Sedang digunakan: ${borrowed}. Jumlah tersedia ikut menyesuaikan.` : "Opsional (kosong = 0). Jumlah tersedia awal otomatis sama dengan jumlah total."}>
+              <Input id="total_quantity" type="number" min={0} step={1} aria-invalid={!!errors.total_quantity}
+                {...register("total_quantity", { setValueAs: (v: string) => (v === "" || v == null ? 0 : Number(v)) })} />
             </Field>
             {editing && (
-              <Field label="Jumlah tersedia" htmlFor="available_quantity" hint="Dihitung otomatis dari peminjaman; tidak bisa diedit.">
+              <Field label="Jumlah tersedia" htmlFor="available_quantity" hint="Dihitung otomatis dari penggunaan; tidak bisa diedit.">
                 <Input id="available_quantity" readOnly value={item.available_quantity} className="bg-muted" />
               </Field>
             )}
@@ -114,8 +114,8 @@ export function SupportingForm({ item }: { item?: SupportingEquipment }) {
         <Card>
           <CardHeader><CardTitle>Keterangan</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            <Field label="Deskripsi" htmlFor="description" error={errors.description?.message}><textarea id="description" rows={3} className={textareaCls} {...register("description")} /></Field>
-            <Field label="Spesifikasi" htmlFor="specifications" error={errors.specifications?.message}><textarea id="specifications" rows={3} className={textareaCls} {...register("specifications")} /></Field>
+            <Field label="Deskripsi" htmlFor="description" error={errors.description?.message} hint="Opsional."><textarea id="description" rows={3} className={textareaCls} {...register("description")} /></Field>
+            <Field label="Spesifikasi" htmlFor="specifications" error={errors.specifications?.message} hint="Opsional."><textarea id="specifications" rows={3} className={textareaCls} {...register("specifications")} /></Field>
             {editing && (
               <Field label="QR token" htmlFor="qr_token" hint="QR mewakili jenis item ini. Dibuat otomatis satu kali dan tidak dapat diubah.">
                 <div className="relative">

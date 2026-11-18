@@ -177,7 +177,7 @@ export function CalibrationFormSheet({ open, onOpenChange, equipmentId }: Props)
           </fieldset>
 
           {result === "failed" && (
-            <Field label="Status alat setelah gagal" htmlFor="cal-failed-status" hint="Alat tidak dapat dipinjam selama berstatus ini.">
+            <Field label="Status alat setelah gagal" htmlFor="cal-failed-status" hint="Alat tidak dapat digunakan selama berstatus ini.">
               <NativeSelect id="cal-failed-status" className={cn("w-full", fieldClass)} {...register("failed_status")}>
                 <option value="calibration">Kalibrasi (menunggu kalibrasi ulang)</option>
                 <option value="damaged">Rusak</option>
@@ -197,7 +197,7 @@ export function CalibrationFormSheet({ open, onOpenChange, equipmentId }: Props)
       <ConfirmDialog
         open={!!confirmValues} onOpenChange={(o) => !o && setConfirmValues(null)}
         title="Simpan hasil kalibrasi gagal?" variant="destructive" confirmLabel="Ya, simpan"
-        description={`Status alat akan berubah menjadi “${failedLabel}” dan tidak dapat dipinjam sampai ditangani. Tindakan ini tercatat di activity log.`}
+        description={`Status alat akan berubah menjadi “${failedLabel}” dan tidak dapat digunakan sampai ditangani. Tindakan ini tercatat di activity log.`}
         onConfirm={async () => { if (confirmValues) await save(confirmValues); }}
       />
     </>

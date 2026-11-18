@@ -4,7 +4,7 @@ export type NotificationGeneratorKind = "calibration" | "overdue" | "temperature
 
 export const GENERATOR_LABEL: Record<NotificationGeneratorKind, string> = {
   calibration: "Kalibrasi H-30",
-  overdue: "Peminjaman terlambat",
+  overdue: "Penggunaan terlambat",
   temperature: "Suhu/kelembapan di luar batas",
   damaged: "Alat dilaporkan rusak",
 };

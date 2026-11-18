@@ -17,7 +17,7 @@ export const useBorrowings = (params?: BorrowingListParams, options?: { enabled?
 export const useBorrowing = (id?: string) =>
   useQuery({ queryKey: queryKeys.borrowings.detail(id ?? ""), queryFn: () => borrowingsService.getById(id!), enabled: !!id });
 
-/** Peminjaman mengubah status alat & stok alat pendukung, sehingga ikut menyegarkan keduanya. */
+/** Penggunaan mengubah status alat & stok alat pendukung, sehingga ikut menyegarkan keduanya. */
 function useBorrowingMutation<TVars, TData>(fn: (v: TVars) => Promise<TData>) {
   const qc = useQueryClient();
   return useMutation({

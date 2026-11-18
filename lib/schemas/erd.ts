@@ -16,6 +16,9 @@ const isoDateTime = z.string().refine((v) => !Number.isNaN(Date.parse(v)), "Tang
 const text = (label: string, max = 200) =>
   z.string().trim().min(1, `${label} wajib diisi`).max(max, `${label} maksimal ${max} karakter`);
 const longText = z.string().max(5000, "Maksimal 5000 karakter");
+/** Opsional: boleh kosong (""). */
+const optText = (label: string, max = 200) =>
+  z.string().trim().max(max, `${label} maksimal ${max} karakter`);
 const id = z.string().min(1);
 const nonNegative = (label: string) => z.number().nonnegative(`${label} tidak boleh negatif`);
 const positiveInt = (label: string) => z.number().int(`${label} harus bilangan bulat`).min(1, `${label} minimal 1`);
@@ -75,9 +78,9 @@ export const equipmentSchema = z.object({
   inventory_code: text("Kode inventaris", 50),
   qr_token: z.string().length(QR_TOKEN_LENGTH),
   equipment_name: text("Nama alat", 150),
-  equipment_type: text("Jenis alat", 100),
-  brand: text("Merek", 100),
-  model: text("Model", 100),
+  equipment_type: optText("Jenis alat", 100),
+  brand: optText("Merek", 100),
+  model: optText("Model", 100),
   room_id: text("Ruangan", 50),
   status: equipmentStatus,
   condition: equipmentCondition.nullable(),
@@ -94,6 +97,8 @@ export const equipmentSchema = z.object({
 /** qr_token, is_active, dan id tidak bisa diisi dari form. */
 export const createEquipmentSchema = equipmentSchema
   .omit({ equipment_id: true, qr_token: true, is_active: true, created_at: true, updated_at: true })
+  // Opsional (boleh null / tidak dikirim): purchase_date, next_calibration_date.
+  .extend({ purchase_date: isoDate.nullable().optional(), next_calibration_date: isoDate.nullable().optional() })
   .strict();
 /** .strict(): mengirim qr_token akan ditolak. */
 export const updateEquipmentSchema = createEquipmentSchema.partial();
@@ -104,11 +109,12 @@ export const supportingEquipmentSchema = z.object({
   item_code: text("Kode item", 50),
   qr_token: z.string().length(QR_TOKEN_LENGTH),
   item_name: text("Nama item", 150),
-  item_type: text("Jenis item", 100),
-  brand: text("Merek", 100),
-  model: z.string().trim().max(100),
-  unit: text("Satuan", 30),
-  total_quantity: positiveInt("Jumlah total"),
+  // Wajib hanya item_code & item_name; sisanya opsional (kosong diterima).
+  item_type: optText("Jenis item", 100),
+  brand: optText("Merek", 100),
+  model: optText("Model", 100),
+  unit: optText("Satuan", 30),
+  total_quantity: z.number().int("Jumlah total harus bilangan bulat").min(0, "Jumlah total tidak boleh negatif"),
   available_quantity: z.number().int("Jumlah tersedia harus bilangan bulat").min(0, "Jumlah tersedia tidak boleh negatif"),
   condition: equipmentCondition,
   status: supportingStatusSchema,
@@ -135,7 +141,7 @@ export const borrowingSchema = z.object({
   borrowing_time: isoDateTime,
   expected_return_time: isoDateTime,
   actual_return_time: isoDateTime.nullable(),
-  purpose: text("Tujuan peminjaman", 300),
+  purpose: text("Tujuan penggunaan", 300),
   usage_location: text("Lokasi penggunaan", 150),
   borrowing_status: borrowingStatusSchema,
   notes: longText,
@@ -157,7 +163,7 @@ export const supportingBorrowingDetailSchema = z.object({
   supporting_detail_id: id,
   borrowing_id: id,
   supporting_equipment_id: id,
-  quantity_borrowed: positiveInt("Jumlah dipinjam"),
+  quantity_borrowed: positiveInt("Jumlah digunakan"),
   quantity_returned: z.number().int().min(0),
   initial_condition: z.string(),
   final_condition: z.string().nullable(),
@@ -167,10 +173,10 @@ export const supportingBorrowingDetailSchema = z.object({
 
 export const createBorrowingSchema = z
   .object({
-    user_id: text("Peminjam", 50),
+    user_id: text("Pengguna", 50),
     borrowing_time: isoDateTime,
     expected_return_time: isoDateTime,
-    purpose: text("Tujuan peminjaman", 300),
+    purpose: text("Tujuan penggunaan", 300),
     usage_location: text("Lokasi penggunaan", 150),
     notes: longText.optional(),
     equipment_ids: z.array(id),
@@ -183,14 +189,14 @@ export const createBorrowingSchema = z
     path: ["equipment_ids"],
   })
   .refine((d) => Date.parse(d.expected_return_time) > Date.parse(d.borrowing_time), {
-    message: "Waktu pengembalian harus setelah waktu peminjaman",
+    message: "Waktu pengembalian harus setelah waktu penggunaan",
     path: ["expected_return_time"],
   });
 
 export const updateBorrowingSchema = z
   .object({
     expected_return_time: isoDateTime,
-    purpose: text("Tujuan peminjaman", 300),
+    purpose: text("Tujuan penggunaan", 300),
     usage_location: text("Lokasi penggunaan", 150),
     notes: longText,
   })

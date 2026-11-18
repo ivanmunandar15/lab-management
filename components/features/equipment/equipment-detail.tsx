@@ -26,7 +26,7 @@ import type { Equipment } from "@/types/erd";
 
 const TABS = [
   { id: "info", label: "Info & Spesifikasi" },
-  { id: "borrowing", label: "Riwayat Peminjaman" },
+  { id: "borrowing", label: "Riwayat Penggunaan" },
   { id: "calibration", label: "Kalibrasi" },
   { id: "maintenance", label: "Maintenance" },
   { id: "documents", label: "Dokumen" },
@@ -41,8 +41,8 @@ function InfoGrid({ e }: { e: Equipment }) {
   const age = e.purchase_date ? Math.max(0, Math.floor((Date.now() - parseISO(e.purchase_date).getTime()) / (365.25 * 86_400_000) * 10) / 10) : null;
   const rows: [string, React.ReactNode][] = [
     ["Kode inventaris", <span key="c" className="font-mono">{e.inventory_code}</span>],
-    ["Jenis", e.equipment_type],
-    ["Merek / Model", `${e.brand} ${e.model}`],
+    ["Jenis", e.equipment_type || "—"],
+    ["Merek / Model", `${e.brand} ${e.model}`.trim() || "—"],
     ["Ruangan", room ? `${room.room_code} — ${room.room_name}` : "—"],
     ["Kondisi", <ConditionBadge key="k" condition={e.condition} />],
     ["Tanggal pembelian", fmtDate(e.purchase_date)],

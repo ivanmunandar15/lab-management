@@ -51,7 +51,7 @@ export function EquipmentScanResult({ token }: { token: string }) {
     return (
       <InactiveNotice
         title="Alat sudah dinonaktifkan"
-        description={`${e.equipment_name} (${e.inventory_code}) tidak lagi digunakan dan tidak dapat dipinjam.`}
+        description={`${e.equipment_name} (${e.inventory_code}) sudah dinonaktifkan dan tidak dapat digunakan.`}
         href={`/equipment/${e.equipment_id}`} linkLabel="Lihat riwayat alat"
       />
     );
@@ -62,7 +62,7 @@ export function EquipmentScanResult({ token }: { token: string }) {
   const calOverdue = isCalibrationOverdue(e);
   const block = e.status === "available" ? getEquipmentBorrowBlock(e) : null;
 
-  // Peminjaman aktif untuk alat ini (detail belum dikembalikan).
+  // Penggunaan aktif untuk alat ini (detail belum dikembalikan).
   const active = borrowings.data?.find((b) => b.borrowing_status === "borrowed" && b.equipment_details.some((d) => d.equipment_id === e.equipment_id && d.final_condition === null));
   const detail = active?.equipment_details.find((d) => d.equipment_id === e.equipment_id && d.final_condition === null);
   const borrower = active ? users.data?.find((u) => u.user_id === active.user_id)?.name ?? "Pengguna" : null;
@@ -93,15 +93,15 @@ export function EquipmentScanResult({ token }: { token: string }) {
           {calOverdue && (
             <Banner tone={CALIBRATION_OVERDUE_BLOCKS_BORROWING ? "danger" : "warning"} title="Kalibrasi alat terlambat">
               {CALIBRATION_OVERDUE_BLOCKS_BORROWING
-                ? "Alat ini tidak dapat dipinjam sampai dikalibrasi ulang. Hubungi teknisi atau SPV."
-                : "Alat masih bisa dipinjam, tetapi hasil ukur perlu diperlakukan hati-hati sampai dikalibrasi ulang."}
+                ? "Alat ini tidak dapat digunakan sampai dikalibrasi ulang. Hubungi teknisi atau SPV."
+                : "Alat masih bisa digunakan, tetapi hasil ukur perlu diperlakukan hati-hati sampai dikalibrasi ulang."}
             </Banner>
           )}
 
           {/* ===== Aksi utama menurut status ===== */}
           {e.status === "available" && (
             <Button className={BIG} disabled={!!block} onClick={() => setBorrowOpen(true)}>
-              {block ? `Tidak dapat dipinjam: ${block}` : "Pinjam"}
+              {block ? `Tidak dapat digunakan: ${block}` : "Gunakan"}
             </Button>
           )}
 
@@ -109,8 +109,8 @@ export function EquipmentScanResult({ token }: { token: string }) {
             <div className="space-y-3">
               {active ? (
                 <dl className="divide-y rounded-lg border px-3">
-                  <InfoRow label="Peminjam">{borrower}</InfoRow>
-                  <InfoRow label="Waktu pinjam">{dt(active.borrowing_time)}</InfoRow>
+                  <InfoRow label="Pengguna">{borrower}</InfoRow>
+                  <InfoRow label="Waktu penggunaan">{dt(active.borrowing_time)}</InfoRow>
                   <InfoRow label="Batas kembali">
                     <span className={cn(remaining?.overdue && "text-red-700 dark:text-red-400")}>
                       {dt(active.expected_return_time)}
@@ -119,17 +119,17 @@ export function EquipmentScanResult({ token }: { token: string }) {
                   </InfoRow>
                 </dl>
               ) : (
-                borrowings.isLoading ? <p className="text-sm text-muted-foreground">Memuat data peminjam…</p> : <Banner tone="warning" title="Data peminjaman tidak ditemukan" />
+                borrowings.isLoading ? <p className="text-sm text-muted-foreground">Memuat data pengguna…</p> : <Banner tone="warning" title="Data penggunaan tidak ditemukan" />
               )}
               <Button className={BIG} disabled={!mayReturn || !detail} onClick={() => setReturnOpen(true)}>Kembalikan</Button>
-              {active && !mayReturn && <p className="text-center text-xs text-muted-foreground">Hanya peminjam, admin, atau SPV yang dapat mengembalikan alat ini.</p>}
+              {active && !mayReturn && <p className="text-center text-xs text-muted-foreground">Hanya pengguna, admin, atau SPV yang dapat mengembalikan alat ini.</p>}
             </div>
           )}
 
           {e.status === "damaged" && (
             <div className="space-y-3">
-              <Banner tone="danger" title="Alat rusak">Alat tidak dapat dipinjam sampai diperbaiki oleh teknisi.</Banner>
-              <Button className={BIG} disabled>Tidak dapat dipinjam</Button>
+              <Banner tone="danger" title="Alat rusak">Alat tidak dapat digunakan sampai diperbaiki oleh teknisi.</Banner>
+              <Button className={BIG} disabled>Tidak dapat digunakan</Button>
               <Button variant="outline" className="h-12 w-full text-base" onClick={() => setReportOpen(true)}><Wrench /> Lapor ke Teknisi</Button>
             </div>
           )}

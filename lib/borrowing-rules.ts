@@ -9,7 +9,7 @@ export const CONDITION_LABEL = { good: "Baik", minor_damage: "Rusak ringan", maj
 export const isCalibrationOverdue = (e: Pick<Equipment, "next_calibration_date">) =>
   getCalibrationState(e.next_calibration_date) === "overdue";
 
-/** Alasan alat tidak boleh dipinjam, atau null jika boleh. Dipakai UI dan service. */
+/** Alasan alat tidak boleh digunakan, atau null jika boleh. Dipakai UI dan service. */
 export function getEquipmentBorrowBlock(e: Equipment): string | null {
   if (!e.is_active) return "Alat sudah dinonaktifkan";
   if (e.status !== "available") return `Alat tidak tersedia (${EQUIPMENT_STATUS_META[e.status].label})`;
@@ -25,7 +25,7 @@ export function getSupportingBorrowBlock(s: SupportingEquipment): string | null 
   return null;
 }
 
-/** Aturan pengembalian: hanya peminjam, admin, atau SPV. */
+/** Aturan pengembalian: hanya pengguna, admin, atau SPV. */
 export function canReturnBorrowing(user: { id: string; role: Role } | undefined, b: Pick<Borrowing, "user_id">): boolean {
   if (!user) return false;
   return user.role === "admin" || user.role === "SPV" || user.id === b.user_id;

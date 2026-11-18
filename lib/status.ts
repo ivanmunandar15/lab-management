@@ -27,7 +27,7 @@ export interface BadgeMeta { label: string; tone: ToneKey }
 /** Warna status konsisten di seluruh aplikasi. */
 export const EQUIPMENT_STATUS_META: Record<EquipmentStatus, BadgeMeta> = {
   available: { label: "Tersedia", tone: "green" },
-  borrowed: { label: "Dipinjam", tone: "blue" },
+  borrowed: { label: "Digunakan", tone: "blue" },
   damaged: { label: "Rusak", tone: "red" },
   maintenance: { label: "Perawatan", tone: "yellow" },
   calibration: { label: "Kalibrasi", tone: "purple" },
@@ -96,7 +96,7 @@ export const SENSOR_STATUS_META: Record<SensorStatus, BadgeMeta> = {
 };
 
 export const NOTIFICATION_TYPE_META: Record<NotificationType, BadgeMeta> = {
-  borrowing: { label: "Peminjaman", tone: "blue" },
+  borrowing: { label: "Penggunaan", tone: "blue" },
   calibration: { label: "Kalibrasi", tone: "purple" },
   maintenance: { label: "Perawatan", tone: "yellow" },
   monitoring: { label: "Monitoring", tone: "red" },

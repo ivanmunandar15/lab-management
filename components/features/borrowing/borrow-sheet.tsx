@@ -31,7 +31,7 @@ interface Props {
   onSuccess?: () => void;
 }
 
-/** Form pinjam: bottom sheet di HP. Dipakai halaman hasil scan dan keranjang. */
+/** Form penggunaan: bottom sheet di HP. Dipakai halaman hasil scan dan keranjang. */
 export function BorrowSheet({ open, onOpenChange, lines, onSuccess }: Props) {
   const { data: session } = useSession();
   const create = useCreateBorrowing();
@@ -63,7 +63,7 @@ export function BorrowSheet({ open, onOpenChange, lines, onSuccess }: Props) {
           supportingLines.map((l) => ({ supporting_equipment_id: l.id, quantity: quantities[l.id] ?? 1 })),
         ),
       );
-      toast.success("Peminjaman berhasil dicatat", { description: `${lines.length} item dipinjam. Jangan lupa kembalikan tepat waktu.` });
+      toast.success("Penggunaan berhasil dicatat", { description: `${lines.length} item digunakan. Jangan lupa kembalikan tepat waktu.` });
       onOpenChange(false);
       onSuccess?.();
     } catch (e) {
@@ -73,7 +73,7 @@ export function BorrowSheet({ open, onOpenChange, lines, onSuccess }: Props) {
         }
         toast.error(e.message);
       } else {
-        toast.error(e instanceof Error ? e.message : "Peminjaman gagal disimpan");
+        toast.error(e instanceof Error ? e.message : "Penggunaan gagal disimpan");
       }
     }
   }
@@ -83,19 +83,19 @@ export function BorrowSheet({ open, onOpenChange, lines, onSuccess }: Props) {
     <BottomSheet
       open={open}
       onOpenChange={(o) => !pending && onOpenChange(o)}
-      title="Form Peminjaman"
-      description={`${lines.length} item akan dipinjam atas nama Anda.`}
+      title="Form Penggunaan"
+      description={`${lines.length} item akan digunakan atas nama Anda.`}
       footer={
         <div className="flex gap-2">
           <Button type="button" variant="outline" className="h-12 flex-1 sm:h-10" disabled={pending} onClick={() => onOpenChange(false)}>Batal</Button>
           <Button type="submit" form="borrow-sheet-form" className="h-12 flex-[2] text-base sm:h-10 sm:text-sm" disabled={pending}>
-            {pending && <Loader2 className="animate-spin" />} Pinjam sekarang
+            {pending && <Loader2 className="animate-spin" />} Gunakan sekarang
           </Button>
         </div>
       }
     >
       <form id="borrow-sheet-form" onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-5 pb-2">
-        <ul className="divide-y rounded-lg border" aria-label="Item yang dipinjam">
+        <ul className="divide-y rounded-lg border" aria-label="Item yang digunakan">
           {lines.map((l) => (
             <li key={`${l.kind}-${l.id}`} className="flex items-center gap-3 p-3">
               <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary" aria-hidden="true">

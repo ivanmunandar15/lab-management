@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { conditionSchema } from "./enums";
 
-/** Field form pinjam (tujuan, lokasi, perkiraan waktu kembali, catatan). */
+/** Field form penggunaan (tujuan, lokasi, perkiraan waktu kembali, catatan). */
 export const borrowDetailsFormSchema = z.object({
   purpose: z.string().trim().min(3, "Tujuan wajib diisi (minimal 3 karakter)").max(300, "Maksimal 300 karakter"),
   usage_location: z.string().trim().min(2, "Lokasi penggunaan wajib diisi").max(150, "Maksimal 150 karakter"),

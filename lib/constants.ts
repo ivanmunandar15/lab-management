@@ -16,8 +16,8 @@ export const CALIBRATION_DUE_SOON_DAYS = 30;
 
 /**
  * Perilaku saat kalibrasi alat terlambat (atau belum pernah dikalibrasi).
- * true  = peminjaman diblokir (UI dan service); false = hanya banner peringatan.
+ * true  = penggunaan diblokir (UI dan service); false = hanya banner peringatan.
  */
 export const CALIBRATION_OVERDUE_BLOCKS_BORROWING = true;
-/** Default lama peminjaman pada form pinjam (hari). */
+/** Default lama penggunaan pada form penggunaan (hari). */
 export const DEFAULT_BORROW_DAYS = 1;

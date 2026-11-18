@@ -44,14 +44,14 @@ export function SupportingScanResult({ token }: { token: string }) {
     return (
       <InactiveNotice
         title="Item sudah dinonaktifkan"
-        description={`${s.item_name} (${s.item_code}) tidak lagi digunakan dan tidak dapat dipinjam.`}
+        description={`${s.item_name} (${s.item_code}) sudah dinonaktifkan dan tidak dapat digunakan.`}
         href={`/supporting-equipment/${s.supporting_equipment_id}`} linkLabel="Lihat riwayat item"
       />
     );
   }
 
   const block = getSupportingBorrowBlock(s);
-  // Pinjaman aktif milik user untuk item ini (masih ada sisa yang belum dikembalikan).
+  // Penggunaan aktif milik user untuk item ini (masih ada sisa yang belum dikembalikan).
   const myLoans = (loans.data ?? [])
     .filter((b) => b.borrowing_status === "borrowed")
     .flatMap((b) => b.supporting_details
@@ -80,15 +80,15 @@ export function SupportingScanResult({ token }: { token: string }) {
           </div>
           <dl className="divide-y rounded-lg border px-3"><InfoRow label="Kondisi"><ConditionBadge condition={s.condition} /></InfoRow></dl>
 
-          {s.status === "damaged" && <Banner tone="danger" title="Item rusak">Item ini tidak dapat dipinjam sampai kondisinya diperbaiki.</Banner>}
+          {s.status === "damaged" && <Banner tone="danger" title="Item rusak">Item ini tidak dapat digunakan sampai kondisinya diperbaiki.</Banner>}
 
           <Button className={BIG} disabled={!!block} onClick={() => setBorrowOpen(true)}>
-            {block ? `Tidak dapat dipinjam: ${block}` : "Pinjam"}
+            {block ? `Tidak dapat digunakan: ${block}` : "Gunakan"}
           </Button>
 
           {myLoans.length > 0 && (
-            <section aria-label="Pinjaman aktif Anda" className="space-y-2">
-              <h2 className="text-sm font-semibold">Pinjaman aktif Anda</h2>
+            <section aria-label="Penggunaan aktif Anda" className="space-y-2">
+              <h2 className="text-sm font-semibold">Penggunaan aktif Anda</h2>
               <ul className="space-y-2">
                 {myLoans.map(({ b, d, remaining }) => {
                   const r = formatRemaining(b.expected_return_time, now);
@@ -97,7 +97,7 @@ export function SupportingScanResult({ token }: { token: string }) {
                       <div className="flex items-start justify-between gap-3 text-sm">
                         <div>
                           <p className="font-semibold">{remaining} {s.unit} belum dikembalikan</p>
-                          <p className="text-xs text-muted-foreground">Dipinjam {dt(b.borrowing_time)}</p>
+                          <p className="text-xs text-muted-foreground">Digunakan {dt(b.borrowing_time)}</p>
                         </div>
                         <p className={cn("text-right text-xs font-semibold", r.overdue && "text-red-700 dark:text-red-400")}>{r.label}</p>
                       </div>

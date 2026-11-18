@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { BorrowingPage } from "@/components/features/borrowing/borrowing-page";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const metadata: Metadata = { title: "Peminjaman" };
+export const metadata: Metadata = { title: "Penggunaan" };
 
 export default function Page() {
   return (

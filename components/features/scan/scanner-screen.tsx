@@ -125,7 +125,7 @@ export function ScannerScreen() {
       )}
     >
       <div className="relative min-h-0 flex-1">
-        <QrScannerView onDetect={onDetect} paused={busy || borrowOpen} onCameraUnavailable={() => setManualOpen(true)} hint={cartMode ? "Mode keranjang: scan semua alat yang dipinjam" : undefined} />
+        <QrScannerView onDetect={onDetect} paused={busy || borrowOpen} onCameraUnavailable={() => setManualOpen(true)} hint={cartMode ? "Mode keranjang: scan semua alat yang digunakan" : undefined} />
 
         {notice && (
           <div
@@ -174,7 +174,7 @@ export function ScannerScreen() {
         )}
 
         {cartMode && (
-          <section aria-label="Keranjang peminjaman" className="space-y-2">
+          <section aria-label="Keranjang penggunaan" className="space-y-2">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-semibold">Keranjang ({cartCount})</h2>
               {cartCount > 0 && <Button type="button" variant="ghost" size="sm" onClick={() => setCart([])}>Kosongkan</Button>}

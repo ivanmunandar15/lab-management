@@ -39,7 +39,7 @@ export function LogbookExportDialog({ open, onOpenChange, equipment }: Props) {
 
   async function run() {
     try {
-      setBusy({ phase: "Mengambil data peminjaman…", pct: 0 });
+      setBusy({ phase: "Mengambil data penggunaan…", pct: 0 });
       const [rooms, users] = await Promise.all([roomsService.list(), usersService.list({ includeInactive: true })]);
       const roomName = (id: string) => rooms.find((r) => r.room_id === id)?.room_name ?? "—";
       const items: { meta: LogbookMeta; rows: LogbookRow[] }[] = [];
@@ -105,7 +105,7 @@ export function LogbookExportDialog({ open, onOpenChange, equipment }: Props) {
           <p className="text-xs text-muted-foreground">
             {mode === "csv"
               ? "Satu file CSV memuat semua alat terpilih."
-              : `Satu halaman memuat ${LOGBOOK_TEMPLATE.rowsPerPage} baris; baris kosong tetap dicetak sampai penuh. Dihitung dari tanggal mulai peminjaman.`}
+              : `Satu halaman memuat ${LOGBOOK_TEMPLATE.rowsPerPage} baris; baris kosong tetap dicetak sampai penuh. Dihitung dari tanggal mulai penggunaan.`}
           </p>
 
           {busy && (

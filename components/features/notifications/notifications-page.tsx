@@ -57,7 +57,7 @@ export function NotificationsPage() {
   return (
     <>
       <PageHeader
-        title="Notifikasi" description="Pemberitahuan peminjaman, kalibrasi, perawatan, dan kondisi ruangan."
+        title="Notifikasi" description="Pemberitahuan penggunaan, kalibrasi, perawatan, dan kondisi ruangan."
         actions={
           <>
             {canGenerate && (

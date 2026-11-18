@@ -23,7 +23,7 @@ export function QuickActions({ role }: { role: Role }) {
       )}
       {can(role, "borrowing", "create") && (
         <Button asChild variant="outline">
-          <Link href="/borrowing?action=create"><ClipboardPlus /> Peminjaman Baru</Link>
+          <Link href="/borrowing?action=create"><ClipboardPlus /> Penggunaan Baru</Link>
         </Button>
       )}
     </>

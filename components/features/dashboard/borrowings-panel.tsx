@@ -20,25 +20,25 @@ export function BorrowingsPanel({ currentUserId }: { currentUserId: string }) {
 
   return (
     <DashboardPanel
-      title="Peminjaman aktif"
+      title="Penggunaan aktif"
       description={
         data ? (
           <>
             {data.active_count} aktif ·{" "}
             <span className={cn(data.overdue_count > 0 && "font-medium text-destructive")}>{data.overdue_count} terlambat</span>
           </>
-        ) : "Peminjaman yang belum dikembalikan."
+        ) : "Penggunaan yang belum dikembalikan."
       }
       action={
         <Button asChild size="sm" variant="outline">
-          <Link href="/borrowing">Buka peminjaman <ArrowRight /></Link>
+          <Link href="/borrowing">Buka penggunaan <ArrowRight /></Link>
         </Button>
       }
       isLoading={isLoading}
       isError={isError}
       onRetry={() => refetch()}
       isEmpty={data?.items.length === 0}
-      empty={{ icon: ClipboardList, title: "Tidak ada peminjaman aktif", description: "Semua alat sudah dikembalikan." }}
+      empty={{ icon: ClipboardList, title: "Tidak ada penggunaan aktif", description: "Semua alat sudah dikembalikan." }}
       skeletonRows={5}
     >
       <ul className="space-y-2">
@@ -73,7 +73,7 @@ export function BorrowingsPanel({ currentUserId }: { currentUserId: string }) {
           );
         })}
       </ul>
-      {rest > 0 && <p className="mt-3 text-center text-xs text-muted-foreground">+{rest} peminjaman lainnya</p>}
+      {rest > 0 && <p className="mt-3 text-center text-xs text-muted-foreground">+{rest} penggunaan lainnya</p>}
     </DashboardPanel>
   );
 }

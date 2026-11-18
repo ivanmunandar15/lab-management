@@ -20,7 +20,7 @@ import { ReturnBorrowingSheet } from "./return-sheet";
 const dt = (iso: string) => format(new Date(iso), "d MMM yyyy, HH:mm", { locale: idLocale });
 const LABEL_TO_CONDITION: Record<string, Condition> = { Baik: "good", "Rusak ringan": "minor_damage", "Rusak berat": "major_damage" };
 
-/** Detail peminjaman: semua alat dan item pendukung + aksi pengembalian (sesuai aturan akses). */
+/** Detail penggunaan: semua alat dan item pendukung + aksi pengembalian (sesuai aturan akses). */
 export function BorrowingDetailSheet({ borrowingId, onClose }: { borrowingId: string | null; onClose: () => void }) {
   const { data: session } = useSession();
   const user = session?.user ? { id: session.user.id, role: session.user.role } : undefined;
@@ -41,12 +41,12 @@ export function BorrowingDetailSheet({ borrowingId, onClose }: { borrowingId: st
     <>
       <BottomSheet
         open={!!borrowingId} onOpenChange={(o) => !o && onClose()} size="lg"
-        title="Detail Peminjaman" description={b ? `Dipinjam oleh ${users.data?.find((u) => u.user_id === b.user_id)?.name ?? "—"}` : "Memuat data…"}
+        title="Detail Penggunaan" description={b ? `Digunakan oleh ${users.data?.find((u) => u.user_id === b.user_id)?.name ?? "—"}` : "Memuat data…"}
         footer={b && b.borrowing_status === "borrowed" ? (
           mayReturn ? (
             <Button className="h-12 w-full text-base sm:h-10 sm:text-sm" disabled={outstanding === 0} onClick={() => setRet({})}>Kembalikan semua ({outstanding})</Button>
           ) : (
-            <p className="text-center text-sm text-muted-foreground">Hanya peminjam, admin, atau SPV yang dapat menyelesaikan pengembalian.</p>
+            <p className="text-center text-sm text-muted-foreground">Hanya pengguna, admin, atau SPV yang dapat menyelesaikan pengembalian.</p>
           )
         ) : undefined}
       >
@@ -58,7 +58,7 @@ export function BorrowingDetailSheet({ borrowingId, onClose }: { borrowingId: st
               <InfoRow label="Status"><StatusBadge status={b.display_status} /></InfoRow>
               <InfoRow label="Tujuan">{b.purpose}</InfoRow>
               <InfoRow label="Lokasi">{b.usage_location}</InfoRow>
-              <InfoRow label="Dipinjam">{dt(b.borrowing_time)}</InfoRow>
+              <InfoRow label="Mulai digunakan">{dt(b.borrowing_time)}</InfoRow>
               <InfoRow label="Batas kembali">
                 <span className={cn(remaining?.overdue && "text-red-700 dark:text-red-400")}>
                   {dt(b.expected_return_time)}

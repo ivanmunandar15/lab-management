@@ -23,8 +23,8 @@ import type { BorrowingWithDetails, SupportingEquipment } from "@/types/erd";
 
 const TABS = [
   { id: "info", label: "Info & Spesifikasi" },
-  { id: "current", label: "Sedang Dipinjam" },
-  { id: "history", label: "Riwayat Peminjaman" },
+  { id: "current", label: "Sedang Digunakan" },
+  { id: "history", label: "Riwayat Penggunaan" },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
 
@@ -45,9 +45,9 @@ function useItemBorrowings(itemId: string) {
 function InfoTab({ s }: { s: SupportingEquipment }) {
   const rows: [string, React.ReactNode][] = [
     ["Kode item", <span key="c" className="font-mono">{s.item_code}</span>],
-    ["Jenis", s.item_type],
-    ["Merek / Model", `${s.brand} ${s.model}`.trim()],
-    ["Satuan", s.unit],
+    ["Jenis", s.item_type || "—"],
+    ["Merek / Model", `${s.brand} ${s.model}`.trim() || "—"],
+    ["Satuan", s.unit || "—"],
     ["Kondisi", <ConditionBadge key="k" condition={s.condition} />],
     ["Dibuat", format(new Date(s.created_at), "d MMMM yyyy", { locale: idLocale })],
   ];
@@ -69,7 +69,7 @@ function InfoTab({ s }: { s: SupportingEquipment }) {
         <CardContent className="space-y-3">
           <StockBar available={s.available_quantity} total={s.total_quantity} unit={s.unit} />
           <dl className="grid grid-cols-3 gap-2 pt-2 text-center">
-            {[["Total", s.total_quantity], ["Tersedia", s.available_quantity], ["Dipinjam", borrowed]].map(([k, v]) => (
+            {[["Total", s.total_quantity], ["Tersedia", s.available_quantity], ["Digunakan", borrowed]].map(([k, v]) => (
               <div key={k} className="rounded-md bg-muted p-2"><dt className="text-xs text-muted-foreground">{k}</dt><dd className="text-lg font-semibold tabular-nums">{v}</dd></div>
             ))}
           </dl>
@@ -85,13 +85,13 @@ function CurrentTab({ s }: { s: SupportingEquipment }) {
   if (q.error) return <ErrorState onRetry={() => q.refetch()} />;
   const current = rows.filter((r) => r.outstanding > 0);
   const total = current.reduce((n, r) => n + r.outstanding, 0);
-  if (current.length === 0) return <EmptyState title="Tidak ada yang sedang dipinjam" description="Semua unit item ini sedang berada di lab." />;
+  if (current.length === 0) return <EmptyState title="Tidak ada yang sedang digunakan" description="Semua unit item ini sedang berada di lab." />;
   return (
     <div className="space-y-3">
-      <p className="text-sm"><strong className="tabular-nums">{total} {s.unit}</strong> sedang dipinjam oleh {current.length} peminjam.</p>
+      <p className="text-sm"><strong className="tabular-nums">{total} {s.unit}</strong> sedang digunakan oleh {current.length} pengguna.</p>
       <div className="overflow-x-auto rounded-lg border">
         <table className="w-full text-sm">
-          <thead className="bg-muted/50"><tr><Th>Peminjam</Th><Th>Jumlah</Th><Th>Dipinjam</Th><Th>Batas kembali</Th><Th>Status</Th></tr></thead>
+          <thead className="bg-muted/50"><tr><Th>Pengguna</Th><Th>Jumlah</Th><Th>Digunakan</Th><Th>Batas kembali</Th><Th>Status</Th></tr></thead>
           <tbody>
             {current.map(({ b, outstanding }) => (
               <tr key={b.borrowing_id} className="border-t">
@@ -113,11 +113,11 @@ function HistoryTab({ s }: { s: SupportingEquipment }) {
   const { q, rows, name } = useItemBorrowings(s.supporting_equipment_id);
   if (q.isLoading) return <Skeleton className="h-32 w-full" />;
   if (q.error) return <ErrorState onRetry={() => q.refetch()} />;
-  if (rows.length === 0) return <EmptyState title="Belum pernah dipinjam" description="Riwayat peminjaman item ini akan tampil di sini." />;
+  if (rows.length === 0) return <EmptyState title="Belum pernah digunakan" description="Riwayat penggunaan item ini akan tampil di sini." />;
   return (
     <div className="overflow-x-auto rounded-lg border">
       <table className="w-full text-sm">
-        <thead className="bg-muted/50"><tr><Th>Peminjam</Th><Th>Dipinjam</Th><Th>Dikembalikan</Th><Th>Jumlah</Th><Th>Tujuan</Th><Th>Status</Th></tr></thead>
+        <thead className="bg-muted/50"><tr><Th>Pengguna</Th><Th>Digunakan</Th><Th>Dikembalikan</Th><Th>Jumlah</Th><Th>Tujuan</Th><Th>Status</Th></tr></thead>
         <tbody>
           {rows.map(({ b, line }) => (
             <tr key={b.borrowing_id} className="border-t align-top">

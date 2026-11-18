@@ -6,7 +6,7 @@ export const REMINDER_LABEL: Record<EmailReminderType, string> = {
   calibration_7d: "Kalibrasi H-7",
   calibration_1d: "Kalibrasi H-1",
   calibration_overdue: "Kalibrasi terlambat",
-  borrowing_overdue: "Peminjaman terlambat",
+  borrowing_overdue: "Penggunaan terlambat",
   digest: "Ringkasan / email uji",
 };
 

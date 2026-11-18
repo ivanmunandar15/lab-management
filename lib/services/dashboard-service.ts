@@ -24,7 +24,7 @@ export interface CalibrationAlerts {
 /** Alat aktif yang terlambat atau jatuh tempo <= 30 hari. Paling mendesak di atas. */
 export const getCalibrationAlerts = () => get<CalibrationAlerts>("dashboard/calibration-alerts");
 
-/* ---------- 3. Peminjaman aktif ---------- */
+/* ---------- 3. Penggunaan aktif ---------- */
 export interface ActiveBorrowingItem {
   borrowing_id: string;
   user_id: string;
@@ -41,7 +41,7 @@ export interface ActiveBorrowings {
   active_count: number;
   overdue_count: number;
 }
-/** Peminjaman berstatus borrowed. Yang terlambat di atas, lalu urut batas kembali terdekat. */
+/** Penggunaan berstatus borrowed. Yang terlambat di atas, lalu urut batas kembali terdekat. */
 export const getActiveBorrowings = () => get<ActiveBorrowings>("dashboard/active-borrowings");
 
 /* ---------- 4. Tren bulanan ---------- */

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DEFAULT_BORROW_DAYS } from "@/lib/constants";
+import { useRooms } from "@/hooks";
 import type { BorrowDetailsForm } from "@/lib/schemas/borrow-forms";
 import type { CreateBorrowingInput } from "@/lib/schemas";
 import { Field } from "./field";
@@ -40,6 +41,9 @@ export function toCreateBorrowingInput(
 /** Field tujuan, lokasi, perkiraan kembali (default +1 hari), catatan. */
 export function BorrowDetailsFields({ form, idPrefix }: { form: UseFormReturn<BorrowDetailsForm>; idPrefix: string }) {
   const { register, setValue, formState: { errors } } = form;
+  // Saran lokasi = daftar ruangan; pengguna tetap bebas mengetik lokasi lain.
+  const { data: rooms = [] } = useRooms();
+  const listId = `${idPrefix}-location-list`;
   const quick = [
     { label: "+4 jam", at: () => addHours(new Date(), 4) },
     { label: "Besok", at: () => addDays(new Date(), 1) },
@@ -47,11 +51,14 @@ export function BorrowDetailsFields({ form, idPrefix }: { form: UseFormReturn<Bo
   ];
   return (
     <div className="space-y-4">
-      <Field label="Tujuan peminjaman" htmlFor={`${idPrefix}-purpose`} error={errors.purpose?.message}>
+      <Field label="Tujuan penggunaan" htmlFor={`${idPrefix}-purpose`} error={errors.purpose?.message}>
         <Input id={`${idPrefix}-purpose`} className={fieldClass} placeholder="Mis. Uji stabilitas sampel batch 12" autoComplete="off" aria-invalid={!!errors.purpose} {...register("purpose")} />
       </Field>
-      <Field label="Lokasi penggunaan" htmlFor={`${idPrefix}-location`} error={errors.usage_location?.message}>
-        <Input id={`${idPrefix}-location`} className={fieldClass} placeholder="Mis. Lab Kimia Lantai 2" autoComplete="off" aria-invalid={!!errors.usage_location} {...register("usage_location")} />
+      <Field label="Lokasi penggunaan" htmlFor={`${idPrefix}-location`} error={errors.usage_location?.message} hint="Pilih dari daftar ruangan, atau ketik lokasi lain.">
+        <Input id={`${idPrefix}-location`} className={fieldClass} list={listId} placeholder="Pilih ruangan atau ketik lokasi" autoComplete="off" aria-invalid={!!errors.usage_location} {...register("usage_location")} />
+        <datalist id={listId}>
+          {rooms.map((r) => <option key={r.room_id} value={r.room_name}>{r.room_code}</option>)}
+        </datalist>
       </Field>
       <Field label="Perkiraan waktu kembali" htmlFor={`${idPrefix}-return`} error={errors.expected_return_time?.message}>
         <Input id={`${idPrefix}-return`} type="datetime-local" className={fieldClass} aria-invalid={!!errors.expected_return_time} {...register("expected_return_time")} />

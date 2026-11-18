@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 
 export const metadata: Metadata = {
   title: { default: APP_NAME, template: `%s | ${APP_NAME}` },
-  description: "Kelola peralatan, peminjaman, kalibrasi, dan pemeliharaan laboratorium dalam satu tempat.",
+  description: "Kelola peralatan, penggunaan, kalibrasi, dan pemeliharaan laboratorium dalam satu tempat.",
 };
 
 export const viewport: Viewport = {

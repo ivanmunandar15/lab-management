@@ -40,10 +40,10 @@ export function BorrowingTab({ equipmentId }: { equipmentId: string }) {
   const { data: users = [] } = useUsers({ includeInactive: true });
   const name = (id: string) => users.find((u) => u.user_id === id)?.name ?? "—";
   return (
-    <Section query={q} empty={{ title: "Belum pernah dipinjam", description: "Riwayat peminjaman alat ini akan tampil di sini." }}>
+    <Section query={q} empty={{ title: "Belum pernah digunakan", description: "Riwayat penggunaan alat ini akan tampil di sini." }}>
       {(rows) => (
         <table className="w-full text-sm">
-          <thead className="bg-muted/50"><tr><Th>Peminjam</Th><Th>Dipinjam</Th><Th>Batas kembali</Th><Th>Dikembalikan</Th><Th>Tujuan</Th><Th>Status</Th></tr></thead>
+          <thead className="bg-muted/50"><tr><Th>Pengguna</Th><Th>Digunakan</Th><Th>Batas kembali</Th><Th>Dikembalikan</Th><Th>Tujuan</Th><Th>Status</Th></tr></thead>
           <tbody>
             {rows.map((b) => (
               <tr key={b.borrowing_id} className="border-t">

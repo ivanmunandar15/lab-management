@@ -16,10 +16,10 @@ import type { Role } from "@/types/erd";
 export const metadata: Metadata = { title: "Dashboard" };
 
 const ROLE_DESCRIPTION: Record<Role, string> = {
-  admin: "Ringkasan operasional laboratorium: alat, peminjaman, kondisi ruangan, dan aktivitas pengguna.",
-  SPV: "Pantau kalibrasi, perawatan, peminjaman, dan kondisi ruangan yang perlu keputusan Anda.",
-  technician: "Pantau jadwal kalibrasi, perawatan, dan peminjaman yang perlu Anda tangani.",
-  QA: "Pantau kepatuhan kalibrasi, peminjaman, dan kondisi ruangan.",
+  admin: "Ringkasan operasional laboratorium: alat, penggunaan, kondisi ruangan, dan aktivitas pengguna.",
+  SPV: "Pantau kalibrasi, perawatan, penggunaan, dan kondisi ruangan yang perlu keputusan Anda.",
+  technician: "Pantau jadwal kalibrasi, perawatan, dan penggunaan yang perlu Anda tangani.",
+  QA: "Pantau kepatuhan kalibrasi, penggunaan, dan kondisi ruangan.",
 };
 
 export default async function DashboardPage() {

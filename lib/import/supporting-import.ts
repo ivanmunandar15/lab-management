@@ -7,7 +7,8 @@ import type { Condition } from "@/types/erd";
 export const SUPPORTING_IMPORT_HEADERS = [
   "item_code", "item_name", "item_type", "brand", "model", "unit", "total_quantity", "condition", "description", "specifications",
 ] as const;
-const OPTIONAL = ["model", "description", "specifications"];
+// Wajib hanya item_code & item_name; kolom lain opsional (total_quantity kosong = 0, unit kosong = pcs).
+const OPTIONAL = ["item_type", "brand", "model", "unit", "total_quantity", "condition", "description", "specifications"];
 const SAMPLE = ["SP-0001", "Beaker Glass 250 mL", "Glassware", "Pyrex", "250", "pcs", "20", "good", "Gelas kimia", "Borosilikat"];
 const CONDITIONS: Condition[] = ["good", "minor_damage", "major_damage"];
 
@@ -39,7 +40,7 @@ export function parseSupportingCsv(text: string, existingCodes: Set<string>): { 
     const qty = get("total_quantity");
     const candidate = {
       item_code: code, item_name: get("item_name"), item_type: get("item_type"), brand: get("brand"), model: get("model"),
-      unit: get("unit"), total_quantity: qty === "" ? NaN : Number(qty), condition,
+      unit: get("unit"), total_quantity: qty === "" ? 0 : Number(qty), condition,
       description: get("description"), specifications: get("specifications"),
     };
     const parsed = createSupportingEquipmentSchema.safeParse(candidate);

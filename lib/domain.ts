@@ -27,7 +27,7 @@ export function parseQrContent(content: string): { type: QrEntityType; token: st
   return m ? { type: m[1] as QrEntityType, token: m[2] } : null;
 }
 
-/* ---------- Peminjaman ---------- */
+/* ---------- Penggunaan ---------- */
 
 /** Status "overdue" tidak disimpan: dihitung dari waktu kembali yang diharapkan. */
 export function isBorrowingOverdue(
