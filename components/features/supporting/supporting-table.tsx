@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Eye, FileText, FileUp, MoreHorizontal, Pencil, Plus, QrCode, RotateCcw, Trash2 } from "lucide-react";
+import { Boxes, Eye, FileText, FileUp, MoreHorizontal, Pencil, Plus, QrCode, RotateCcw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -19,6 +19,7 @@ import { getStockLevel, STOCK_LEVEL_LABEL, type StockLevel } from "@/lib/stock";
 import { CONDITION_META } from "@/lib/status";
 import { StockBar } from "./stock-bar";
 import { SupportingImportDialog } from "./supporting-import-dialog";
+import { SupportingStockDialog } from "./supporting-stock-dialog";
 import type { Condition, SupportingEquipment, SupportingStatus } from "@/types/erd";
 
 const STATUS_OPTIONS: { value: SupportingStatus; label: string }[] = [
@@ -37,6 +38,7 @@ export function SupportingTable() {
   const [toDelete, setToDelete] = useState<SupportingEquipment | null>(null);
   const [importOpen, setImportOpen] = useState(false);
   const [logbookOpen, setLogbookOpen] = useState(false);
+  const [stockOpen, setStockOpen] = useState(false);
   const types = useMemo(() => [...new Set(data.map((s) => s.item_type).filter(Boolean))].sort(), [data]);
 
   const columns = useMemo<ColumnDef<SupportingEquipment>[]>(() => [
@@ -129,6 +131,7 @@ export function SupportingTable() {
               }}
             />
             <Button variant="outline" disabled={exportItems.length === 0} onClick={() => setLogbookOpen(true)}><FileText /> Log Book</Button>
+            {can("update") && <Button variant="outline" onClick={() => setStockOpen(true)}><Boxes /> Atur Stok</Button>}
             {can("create") && <Button variant="outline" onClick={() => setImportOpen(true)}><FileUp /> Import CSV</Button>}
             {can("create") && <Button asChild><Link href="/supporting-equipment/new"><Plus /> Tambah Item</Link></Button>}
           </>
@@ -138,6 +141,7 @@ export function SupportingTable() {
         emptyAction={can("create") ? <Button asChild><Link href="/supporting-equipment/new"><QrCode /> Tambah item pertama</Link></Button> : undefined}
       />
       <SupportingImportDialog open={importOpen} onOpenChange={setImportOpen} />
+      <SupportingStockDialog open={stockOpen} onOpenChange={setStockOpen} items={data} selected={selected} />
       <LogbookExportDialog open={logbookOpen} onOpenChange={setLogbookOpen} supporting={exportItems} />
       <ConfirmDialog
         open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} variant="destructive"

@@ -17,7 +17,7 @@ import { useCreateSupportingEquipment, useUpdateSupportingEquipment } from "@/ho
 import type { Condition, SupportingEquipment } from "@/types/erd";
 
 const EMPTY: CreateSupportingEquipmentInput = {
-  item_code: "", item_name: "", item_type: "", brand: "", model: "", unit: "pcs", total_quantity: 0,
+  item_code: "", item_name: "", item_type: "", brand: "", model: "", unit: "pcs", total_quantity: 1,
   condition: "good", description: "", specifications: "",
 };
 
@@ -99,9 +99,9 @@ export function SupportingForm({ item }: { item?: SupportingEquipment }) {
           <CardContent className="grid gap-4 sm:grid-cols-2">
             <Field label="Satuan" htmlFor="unit" error={errors.unit?.message} hint="Opsional. Kosong = pcs."><Input id="unit" placeholder="pcs, set, botol…" aria-invalid={!!errors.unit} {...register("unit")} /></Field>
             <Field label="Jumlah total" htmlFor="total_quantity" error={errors.total_quantity?.message}
-              hint={editing ? `Sedang digunakan: ${borrowed}. Jumlah tersedia ikut menyesuaikan.` : "Opsional (kosong = 0). Jumlah tersedia awal otomatis sama dengan jumlah total."}>
+              hint={editing ? `Sedang digunakan: ${borrowed}. Jumlah tersedia ikut menyesuaikan.` : "Opsional (kosong = 1). Jumlah tersedia awal otomatis sama dengan jumlah total."}>
               <Input id="total_quantity" type="number" min={0} step={1} aria-invalid={!!errors.total_quantity}
-                {...register("total_quantity", { setValueAs: (v: string) => (v === "" || v == null ? 0 : Number(v)) })} />
+                {...register("total_quantity", { setValueAs: (v: string) => (v === "" || v == null ? 1 : Number(v)) })} />
             </Field>
             {editing && (
               <Field label="Jumlah tersedia" htmlFor="available_quantity" hint="Dihitung otomatis dari penggunaan; tidak bisa diedit.">
