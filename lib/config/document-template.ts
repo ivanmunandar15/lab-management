@@ -4,6 +4,8 @@
  */
 export const LOGBOOK_TEMPLATE = {
   documentNumber: "FM/L-ACT.06.4/08",
+  /** Nomor dokumen khusus log book alat pendukung. null = pakai documentNumber di atas. */
+  supportingDocumentNumber: null as string | null,
   labName: "LABORATORIUM PENGUJIAN",
   companyName: "PT. ANINDYA CERTIFICATION AND TESTING",
   title: "LOG BOOK PENGGUNAAN PERALATAN",

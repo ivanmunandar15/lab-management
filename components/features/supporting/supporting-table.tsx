@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Eye, FileUp, MoreHorizontal, Pencil, Plus, QrCode, RotateCcw, Trash2 } from "lucide-react";
+import { Eye, FileText, FileUp, MoreHorizontal, Pencil, Plus, QrCode, RotateCcw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -11,6 +11,7 @@ import { ConfirmDialog } from "@/components/features/common/confirm-dialog";
 import { DataTable } from "@/components/features/common/data-table";
 import { ConditionBadge, StatusBadge } from "@/components/features/common/status-badge";
 import { ExportMenu } from "@/components/features/equipment/export-menu";
+import { LogbookExportDialog } from "@/components/features/equipment/logbook-export-dialog";
 import { useCan } from "@/components/features/equipment/use-can";
 import { useRestoreSupportingEquipment, useSoftDeleteSupportingEquipment, useSupportingEquipmentList } from "@/hooks";
 import { exportSupportingCsv, exportSupportingLabelPdf, exportSupportingQrZip } from "@/lib/export/supporting-export";
@@ -35,6 +36,7 @@ export function SupportingTable() {
   const [selected, setSelected] = useState<SupportingEquipment[]>([]);
   const [toDelete, setToDelete] = useState<SupportingEquipment | null>(null);
   const [importOpen, setImportOpen] = useState(false);
+  const [logbookOpen, setLogbookOpen] = useState(false);
   const types = useMemo(() => [...new Set(data.map((s) => s.item_type).filter(Boolean))].sort(), [data]);
 
   const columns = useMemo<ColumnDef<SupportingEquipment>[]>(() => [
@@ -126,6 +128,7 @@ export function SupportingTable() {
                 pdf: (size, p) => exportSupportingLabelPdf(exportItems, size, p),
               }}
             />
+            <Button variant="outline" disabled={exportItems.length === 0} onClick={() => setLogbookOpen(true)}><FileText /> Log Book</Button>
             {can("create") && <Button variant="outline" onClick={() => setImportOpen(true)}><FileUp /> Import CSV</Button>}
             {can("create") && <Button asChild><Link href="/supporting-equipment/new"><Plus /> Tambah Item</Link></Button>}
           </>
@@ -135,6 +138,7 @@ export function SupportingTable() {
         emptyAction={can("create") ? <Button asChild><Link href="/supporting-equipment/new"><QrCode /> Tambah item pertama</Link></Button> : undefined}
       />
       <SupportingImportDialog open={importOpen} onOpenChange={setImportOpen} />
+      <LogbookExportDialog open={logbookOpen} onOpenChange={setLogbookOpen} supporting={exportItems} />
       <ConfirmDialog
         open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)} variant="destructive"
         title={`Nonaktifkan "${toDelete?.item_name}"?`}

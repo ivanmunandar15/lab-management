@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { ArrowLeft, Pencil, RotateCcw, Trash2 } from "lucide-react";
+import { ArrowLeft, FileText, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import { ConfirmDialog } from "@/components/features/common/confirm-dialog";
 import { EmptyState } from "@/components/features/common/empty-state";
 import { ErrorState } from "@/components/features/common/error-state";
 import { ConditionBadge, StatusBadge } from "@/components/features/common/status-badge";
+import { LogbookExportDialog } from "@/components/features/equipment/logbook-export-dialog";
 import { QrCard } from "@/components/features/equipment/qr-card";
 import { useCan } from "@/components/features/equipment/use-can";
 import { useBorrowings, useRestoreSupportingEquipment, useSoftDeleteSupportingEquipment, useSupportingEquipment, useUsers } from "@/hooks";
@@ -143,6 +144,7 @@ export function SupportingDetail({ id }: { id: string }) {
   const restore = useRestoreSupportingEquipment();
   const [tab, setTab] = useState<TabId>("info");
   const [confirm, setConfirm] = useState(false);
+  const [logbookOpen, setLogbookOpen] = useState(false);
 
   if (isLoading) return <div className="space-y-4"><Skeleton className="h-24 w-full" /><Skeleton className="h-64 w-full" /></div>;
   if (error || !s) return <ErrorState onRetry={() => refetch()} />;
@@ -161,6 +163,7 @@ export function SupportingDetail({ id }: { id: string }) {
             <StockBar available={s.available_quantity} total={s.total_quantity} unit={s.unit} className="max-w-xs" />
             <p className="break-all text-xs text-muted-foreground">QR jenis item: {qrUrl("sp", s.qr_token)}</p>
             <div className="flex flex-wrap gap-2 pt-1">
+              <Button variant="outline" size="sm" onClick={() => setLogbookOpen(true)}><FileText /> Log Book</Button>
               {can("update") && <Button asChild variant="outline" size="sm"><Link href={`/supporting-equipment/${s.supporting_equipment_id}/edit`}><Pencil /> Edit</Link></Button>}
               {can("delete") && (s.is_active
                 ? <Button variant="outline" size="sm" className="text-destructive" onClick={() => setConfirm(true)}><Trash2 /> Nonaktifkan</Button>
@@ -190,6 +193,7 @@ export function SupportingDetail({ id }: { id: string }) {
         {tab === "history" && <HistoryTab s={s} />}
       </div>
 
+      <LogbookExportDialog open={logbookOpen} onOpenChange={setLogbookOpen} supporting={[s]} />
       <ConfirmDialog open={confirm} onOpenChange={setConfirm} variant="destructive"
         title={`Nonaktifkan "${s.item_name}"?`}
         description="Item disembunyikan dari daftar dan QR-nya akan menampilkan “item sudah dinonaktifkan”. Data tidak dihapus permanen."

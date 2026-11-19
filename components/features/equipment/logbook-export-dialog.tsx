@@ -10,9 +10,9 @@ import { Label } from "@/components/ui/label";
 import { borrowingsService, roomsService, usersService } from "@/lib/services";
 import { LOGBOOK_TEMPLATE } from "@/lib/config/document-template";
 import {
-  buildLogbookRows, exportLogbookCsv, exportLogbookPdf, exportLogbookZip, type LogbookMeta, type LogbookRow,
+  buildLogbookRows, buildSupportingLogbookRows, exportLogbookCsv, exportLogbookPdf, exportLogbookZip, type LogbookMeta, type LogbookRow,
 } from "@/lib/export/logbook-export";
-import type { Equipment } from "@/types/erd";
+import type { Equipment, Room, SupportingEquipment } from "@/types/erd";
 
 type Mode = "pdf" | "csv" | "blank";
 const MODE_LABEL: Record<Mode, string> = {
@@ -24,10 +24,17 @@ const MODE_LABEL: Record<Mode, string> = {
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  equipment: Equipment[];
+  /** Log book alat (Equipment). Isi salah satu: `equipment` atau `supporting`. */
+  equipment?: Equipment[];
+  /** Log book alat pendukung (Supporting Equipment): ada kolom Jumlah. */
+  supporting?: SupportingEquipment[];
 }
 
-export function LogbookExportDialog({ open, onOpenChange, equipment }: Props) {
+export function LogbookExportDialog({ open, onOpenChange, equipment = [], supporting }: Props) {
+  const isSupporting = supporting !== undefined;
+  const count = isSupporting ? supporting.length : equipment.length;
+  const noun = isSupporting ? "item" : "alat";
+  const firstName = isSupporting ? supporting[0]?.item_name : equipment[0]?.equipment_name;
   const today = new Date();
   const [from, setFrom] = useState(format(startOfMonth(today), "yyyy-MM-dd"));
   const [to, setTo] = useState(format(endOfMonth(today), "yyyy-MM-dd"));
@@ -35,20 +42,33 @@ export function LogbookExportDialog({ open, onOpenChange, equipment }: Props) {
   const [busy, setBusy] = useState<{ phase: string; pct: number } | null>(null);
 
   const invalidRange = mode !== "blank" && (!from || !to || from > to);
-  const single = equipment.length === 1;
+  const single = count === 1;
 
   async function run() {
     try {
       setBusy({ phase: "Mengambil data penggunaan…", pct: 0 });
-      const [rooms, users] = await Promise.all([roomsService.list(), usersService.list({ includeInactive: true })]);
+      const [rooms, users] = await Promise.all([isSupporting ? Promise.resolve<Room[]>([]) : roomsService.list(), usersService.list({ includeInactive: true })]);
       const roomName = (id: string) => rooms.find((r) => r.room_id === id)?.room_name ?? "—";
       const items: { meta: LogbookMeta; rows: LogbookRow[] }[] = [];
-      for (const e of equipment) {
-        const borrowings = mode === "blank" ? [] : await borrowingsService.list({ equipment_id: e.equipment_id });
-        items.push({
-          meta: { equipment: e, roomName: roomName(e.room_id) },
-          rows: buildLogbookRows(e.equipment_id, borrowings, users, { from, to }),
-        });
+      if (isSupporting) {
+        for (const sp of supporting) {
+          const borrowings = mode === "blank" ? [] : await borrowingsService.list({ supporting_equipment_id: sp.supporting_equipment_id });
+          items.push({
+            meta: {
+              kind: "supporting", name: sp.item_name, code: sp.item_code,
+              infoLabel: "Jenis / Merek", infoValue: [sp.item_type, sp.brand, sp.model].filter(Boolean).join(" / ") || "—",
+            },
+            rows: buildSupportingLogbookRows(sp.supporting_equipment_id, borrowings, users, sp.unit, { from, to }),
+          });
+        }
+      } else {
+        for (const e of equipment) {
+          const borrowings = mode === "blank" ? [] : await borrowingsService.list({ equipment_id: e.equipment_id });
+          items.push({
+            meta: { kind: "equipment", name: e.equipment_name, code: e.inventory_code, infoLabel: "Lokasi", infoValue: roomName(e.room_id) },
+            rows: buildLogbookRows(e.equipment_id, borrowings, users, { from, to }),
+          });
+        }
       }
 
       if (mode === "csv") {
@@ -60,7 +80,7 @@ export function LogbookExportDialog({ open, onOpenChange, equipment }: Props) {
       } else {
         await exportLogbookZip(items, { blank: mode === "blank" }, (d, t, p) => setBusy({ phase: p, pct: Math.round((d / Math.max(1, t)) * 100) }));
       }
-      toast.success(`Log book berhasil dibuat (${equipment.length} alat)`);
+      toast.success(`Log book berhasil dibuat (${count} ${noun})`);
       onOpenChange(false);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Log book gagal dibuat");
@@ -75,8 +95,8 @@ export function LogbookExportDialog({ open, onOpenChange, equipment }: Props) {
         <DialogHeader>
           <DialogTitle>Ekspor Log Book Penggunaan</DialogTitle>
           <DialogDescription>
-            {single ? equipment[0].equipment_name : `${equipment.length} alat`}
-            {!single && " — hasilnya satu file ZIP berisi PDF per alat."}
+            {single ? firstName : `${count} ${noun}`}
+            {!single && ` — hasilnya satu file ZIP berisi PDF per ${noun}.`}
           </DialogDescription>
         </DialogHeader>
 
@@ -104,7 +124,7 @@ export function LogbookExportDialog({ open, onOpenChange, equipment }: Props) {
 
           <p className="text-xs text-muted-foreground">
             {mode === "csv"
-              ? "Satu file CSV memuat semua alat terpilih."
+              ? "Satu file CSV memuat semua {noun} terpilih."
               : `Satu halaman memuat ${LOGBOOK_TEMPLATE.rowsPerPage} baris; baris kosong tetap dicetak sampai penuh. Dihitung dari tanggal mulai penggunaan.`}
           </p>
 
@@ -120,7 +140,7 @@ export function LogbookExportDialog({ open, onOpenChange, equipment }: Props) {
 
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={!!busy}>Batal</Button>
-          <Button onClick={run} disabled={!!busy || invalidRange || equipment.length === 0}>
+          <Button onClick={run} disabled={!!busy || invalidRange || count === 0}>
             {busy ? <Loader2 className="animate-spin" /> : <FileText />} Buat berkas
           </Button>
         </div>
